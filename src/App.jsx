@@ -429,6 +429,7 @@ function LandingPage() {
         onBookMechanic={() => navigate('/login')}
         onDetectLocation={handleDetectLocation}
       />
+      <LandingNearbyMechanics />
 
       <LandingFAQ />
       <LocalServiceAreas />

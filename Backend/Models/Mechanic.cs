@@ -12,6 +12,7 @@ namespace MotorSafe.Backend.Models
         public double Rating { get; set; }
         public bool IsAvailable { get; set; }
         public string SpecialSkills { get; set; } = string.Empty;
+        public string Role { get; set; } = "Mechanic";
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
 }

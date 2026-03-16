@@ -104,6 +104,10 @@ namespace MotorSafe.Backend.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("double");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ShopName")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -120,41 +124,1402 @@ namespace MotorSafe.Backend.Migrations
                         new
                         {
                             Id = 1,
-                            Address = "123 Le Loi, Q1, HCMC",
+                            Address = "187 Lê Văn Hiến, Ngũ Hành Sơn, Đà Nẵng",
                             IsAvailable = true,
-                            Latitude = 10.776899999999999,
-                            Longitude = 106.7009,
-                            Name = "Nguyen Van A",
-                            Phone = "0901234567",
-                            Rating = 4.7999999999999998,
-                            ShopName = "A Motor Repair",
-                            SpecialSkills = "Engine, Tires"
+                            Latitude = 16.032674,
+                            Longitude = 108.251366,
+                            Name = "Đỗ Hữu Bình",
+                            Phone = "0901094968",
+                            Rating = 4.0999999999999996,
+                            Role = "Mechanic",
+                            ShopName = "Tùng Motor Service",
+                            SpecialSkills = "Tires"
                         },
                         new
                         {
                             Id = 2,
-                            Address = "456 Nguyen Hue, Q1, HCMC",
+                            Address = "164 Phạm Hùng, Cẩm Lệ, Đà Nẵng",
                             IsAvailable = true,
-                            Latitude = 10.7745,
-                            Longitude = 106.7032,
-                            Name = "Tran Van B",
-                            Phone = "0987654321",
-                            Rating = 4.5,
-                            ShopName = "B Quick Fix",
-                            SpecialSkills = "Battery, Start"
+                            Latitude = 16.014289000000002,
+                            Longitude = 108.185558,
+                            Name = "Ngô Quang Em",
+                            Phone = "0903753177",
+                            Rating = 4.2999999999999998,
+                            Role = "Mechanic",
+                            ShopName = "Phú Motor Service",
+                            SpecialSkills = "Chain, Tires"
                         },
                         new
                         {
                             Id = 3,
-                            Address = "789 Tran Hung Dao, Q5, HCMC",
+                            Address = "65 Nguyễn Lương Bằng, Liên Chiểu, Đà Nẵng",
                             IsAvailable = true,
-                            Latitude = 10.7554,
-                            Longitude = 106.66679999999999,
-                            Name = "Le Thi C",
-                            Phone = "0912223334",
-                            Rating = 4.9000000000000004,
-                            ShopName = "C Motor Service",
+                            Latitude = 16.055076,
+                            Longitude = 108.157409,
+                            Name = "Đỗ Văn Bình",
+                            Phone = "0909133701",
+                            Rating = 4.5999999999999996,
+                            Role = "Mechanic",
+                            ShopName = "Bình Motor Service",
+                            SpecialSkills = "Battery"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Address = "66 Nguyễn Tất Thành, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.064655999999999,
+                            Longitude = 108.126135,
+                            Name = "Ngô Quốc Tùng",
+                            Phone = "0908427609",
+                            Rating = 4.2000000000000002,
+                            Role = "Mechanic",
+                            ShopName = "Hùng Motor Service",
+                            SpecialSkills = "Tires, Chain"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Address = "175 Trần Đại Nghĩa, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.019469000000001,
+                            Longitude = 108.269553,
+                            Name = "Dương Ngọc An",
+                            Phone = "0905625011",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Cường Motor Service",
                             SpecialSkills = "All"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Address = "171 Lê Văn Hiến, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 15.995485,
+                            Longitude = 108.26107399999999,
+                            Name = "Huỳnh Công Phú",
+                            Phone = "0909330987",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "An Motor Service",
+                            SpecialSkills = "Chain, Tires"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Address = "55 Yết Kiêu, Sơn Trà, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.078365000000002,
+                            Longitude = 108.243655,
+                            Name = "Dương Công Nam",
+                            Phone = "0909708556",
+                            Rating = 4.2999999999999998,
+                            Role = "Mechanic",
+                            ShopName = "Tâm Motor Service",
+                            SpecialSkills = "Tires, Chain"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Address = "102 Hồ Xuân Hương, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 15.98132,
+                            Longitude = 108.24027,
+                            Name = "Lê Quang An",
+                            Phone = "0909350325",
+                            Rating = 4.5,
+                            Role = "Mechanic",
+                            ShopName = "Nam Motor Service",
+                            SpecialSkills = "Battery"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Address = "118 Hoàng Văn Thái, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.097102,
+                            Longitude = 108.150327,
+                            Name = "Lý Đức Tùng",
+                            Phone = "0908064446",
+                            Rating = 4.2999999999999998,
+                            Role = "Mechanic",
+                            ShopName = "Long Motor Service",
+                            SpecialSkills = "Start"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Address = "185 Nguyễn Sinh Sắc, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.052676999999999,
+                            Longitude = 108.13473399999999,
+                            Name = "Phan Minh Dũng",
+                            Phone = "0902311858",
+                            Rating = 4.7999999999999998,
+                            Role = "Mechanic",
+                            ShopName = "Tùng Motor Service",
+                            SpecialSkills = "Battery"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Address = "42 Hoàng Diệu, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.044757000000001,
+                            Longitude = 108.225266,
+                            Name = "Dương Thu Phương Cường",
+                            Phone = "0902465243",
+                            Rating = 4.0999999999999996,
+                            Role = "Mechanic",
+                            ShopName = "Hùng Motor Service",
+                            SpecialSkills = "Engine"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Address = "129 Hoàng Văn Thái, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.093934999999998,
+                            Longitude = 108.17583399999999,
+                            Name = "Võ Hữu Tâm",
+                            Phone = "0909815767",
+                            Rating = 4.7000000000000002,
+                            Role = "Mechanic",
+                            ShopName = "Tùng Motor Service",
+                            SpecialSkills = "Tires"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Address = "200 Bạch Đằng, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.061052,
+                            Longitude = 108.220197,
+                            Name = "Huỳnh Công Dũng",
+                            Phone = "0903581442",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Hùng Motor Service",
+                            SpecialSkills = "Battery, Engine"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Address = "150 Cách Mạng Tháng 8, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.003907000000002,
+                            Longitude = 108.200835,
+                            Name = "Lê Công Khánh",
+                            Phone = "0907278915",
+                            Rating = 4.9000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Phong Motor Service",
+                            SpecialSkills = "Tires"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Address = "143 Nguyễn Văn Linh, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.051421000000001,
+                            Longitude = 108.211714,
+                            Name = "Hoàng Đức Hùng",
+                            Phone = "0909549566",
+                            Rating = 4.7999999999999998,
+                            Role = "Mechanic",
+                            ShopName = "Tùng Motor Service",
+                            SpecialSkills = "Start"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Address = "99 Lê Văn Hiến, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.035858000000001,
+                            Longitude = 108.258009,
+                            Name = "Nguyễn Đình Phát",
+                            Phone = "0905090320",
+                            Rating = 4.2000000000000002,
+                            Role = "Mechanic",
+                            ShopName = "Cường Motor Service",
+                            SpecialSkills = "Start"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Address = "52 Quang Trung, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.044547999999999,
+                            Longitude = 108.210386,
+                            Name = "Đặng Thành Phú",
+                            Phone = "0905306637",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Phát Motor Service",
+                            SpecialSkills = "Tires"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Address = "65 Võ Kỳ Sơn, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.018186,
+                            Longitude = 108.269972,
+                            Name = "Đặng Thanh Hùng",
+                            Phone = "0908330361",
+                            Rating = 4.7000000000000002,
+                            Role = "Mechanic",
+                            ShopName = "Hùng Motor Service",
+                            SpecialSkills = "Tires, Chain"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Address = "6 Nguyễn Sinh Sắc, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.089822000000002,
+                            Longitude = 108.12039300000001,
+                            Name = "Hồ Văn Phú",
+                            Phone = "0906135658",
+                            Rating = 4.2999999999999998,
+                            Role = "Mechanic",
+                            ShopName = "Giang Motor Service",
+                            SpecialSkills = "All"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Address = "111 Nguyễn Tất Thành, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.056066000000001,
+                            Longitude = 108.158935,
+                            Name = "Phạm Bích Phú",
+                            Phone = "0907857410",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Khánh Motor Service",
+                            SpecialSkills = "Battery"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Address = "56 Lê Văn Hiến, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 15.994177000000001,
+                            Longitude = 108.269577,
+                            Name = "Huỳnh Công Tâm",
+                            Phone = "0901534688",
+                            Rating = 5.0,
+                            Role = "Mechanic",
+                            ShopName = "Khánh Motor Service",
+                            SpecialSkills = "Tires"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Address = "127 Hoàng Văn Thái, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.127310999999999,
+                            Longitude = 108.154809,
+                            Name = "Lê Minh An",
+                            Phone = "0905408422",
+                            Rating = 4.0999999999999996,
+                            Role = "Mechanic",
+                            ShopName = "An Motor Service",
+                            SpecialSkills = "Battery, Engine"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Address = "93 Hồ Xuân Hương, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.018554000000002,
+                            Longitude = 108.27991,
+                            Name = "Dương Bích Phát",
+                            Phone = "0907880774",
+                            Rating = 4.7000000000000002,
+                            Role = "Mechanic",
+                            ShopName = "Phát Motor Service",
+                            SpecialSkills = "Tires"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Address = "24 Lê Văn Hiến, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.004549000000001,
+                            Longitude = 108.26917400000001,
+                            Name = "Phạm Đình Cường",
+                            Phone = "0906428342",
+                            Rating = 5.0,
+                            Role = "Mechanic",
+                            ShopName = "Phú Motor Service",
+                            SpecialSkills = "Battery, Engine"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Address = "41 Nguyễn Lương Bằng, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.1191,
+                            Longitude = 108.147094,
+                            Name = "Phan Thu Phương Khánh",
+                            Phone = "0908990389",
+                            Rating = 4.7000000000000002,
+                            Role = "Mechanic",
+                            ShopName = "Bình Motor Service",
+                            SpecialSkills = "Engine"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Address = "192 Ông Ích Khiêm, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.036840999999999,
+                            Longitude = 108.228837,
+                            Name = "Đặng Văn Phú",
+                            Phone = "0901360526",
+                            Rating = 4.9000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Minh Motor Service",
+                            SpecialSkills = "All"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Address = "165 Thái Thị Bôi, Thanh Khê, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.051984000000001,
+                            Longitude = 108.17153999999999,
+                            Name = "Vũ Minh Em",
+                            Phone = "0908448524",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Tùng Motor Service",
+                            SpecialSkills = "Start"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Address = "51 Trường Chinh, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.027452,
+                            Longitude = 108.19891699999999,
+                            Name = "Huỳnh Đình Giang",
+                            Phone = "0905493293",
+                            Rating = 4.0999999999999996,
+                            Role = "Mechanic",
+                            ShopName = "Dũng Motor Service",
+                            SpecialSkills = "Battery"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Address = "152 Hoàng Văn Thái, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.060217000000002,
+                            Longitude = 108.15311,
+                            Name = "Lý Bích Dũng",
+                            Phone = "0902505274",
+                            Rating = 4.5999999999999996,
+                            Role = "Mechanic",
+                            ShopName = "Khánh Motor Service",
+                            SpecialSkills = "Tires"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Address = "200 Nguyễn Phước Lan, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.009004999999998,
+                            Longitude = 108.21671600000001,
+                            Name = "Võ Đình Bình",
+                            Phone = "0906003373",
+                            Rating = 4.7000000000000002,
+                            Role = "Mechanic",
+                            ShopName = "Bình Motor Service",
+                            SpecialSkills = "Start"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Address = "26 Trần Phú, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.041357000000001,
+                            Longitude = 108.22854700000001,
+                            Name = "Huỳnh Đức Tâm",
+                            Phone = "0905787887",
+                            Rating = 4.5999999999999996,
+                            Role = "Mechanic",
+                            ShopName = "Giang Motor Service",
+                            SpecialSkills = "Chain, Tires"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Address = "116 Nguyễn Tất Thành, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.114281999999999,
+                            Longitude = 108.134911,
+                            Name = "Dương Minh Tâm",
+                            Phone = "0907674430",
+                            Rating = 4.5,
+                            Role = "Mechanic",
+                            ShopName = "Tùng Motor Service",
+                            SpecialSkills = "Engine"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Address = "72 Hoàng Văn Thái, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.055789000000001,
+                            Longitude = 108.15496899999999,
+                            Name = "Vũ Bích Tùng",
+                            Phone = "0906891992",
+                            Rating = 4.0999999999999996,
+                            Role = "Mechanic",
+                            ShopName = "Bình Motor Service",
+                            SpecialSkills = "Battery"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Address = "174 Núi Thành, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.066337999999998,
+                            Longitude = 108.225855,
+                            Name = "Huỳnh Thu Phương An",
+                            Phone = "0909864313",
+                            Rating = 4.2000000000000002,
+                            Role = "Mechanic",
+                            ShopName = "Nam Motor Service",
+                            SpecialSkills = "Start"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Address = "174 Hồ Xuân Hương, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.011171999999998,
+                            Longitude = 108.272293,
+                            Name = "Võ Đức Giang",
+                            Phone = "0906179432",
+                            Rating = 4.7999999999999998,
+                            Role = "Mechanic",
+                            ShopName = "Hùng Motor Service",
+                            SpecialSkills = "Chain, Tires"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Address = "69 Nguyễn Sinh Sắc, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.108222000000001,
+                            Longitude = 108.15203200000001,
+                            Name = "Bùi Ngọc An",
+                            Phone = "0909626249",
+                            Rating = 4.9000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Em Motor Service",
+                            SpecialSkills = "Engine"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Address = "23 Lê Văn Hiến, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 15.991007,
+                            Longitude = 108.241895,
+                            Name = "Võ Thị Minh",
+                            Phone = "0903659402",
+                            Rating = 4.5999999999999996,
+                            Role = "Mechanic",
+                            ShopName = "Hùng Motor Service",
+                            SpecialSkills = "Battery, Engine"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Address = "64 Tôn Đức Thắng, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.105160000000001,
+                            Longitude = 108.149263,
+                            Name = "Vũ Quang Phong",
+                            Phone = "0901585302",
+                            Rating = 4.5,
+                            Role = "Mechanic",
+                            ShopName = "Phát Motor Service",
+                            SpecialSkills = "Chain, Tires"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Address = "47 Nguyễn Lương Bằng, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.073663,
+                            Longitude = 108.14976900000001,
+                            Name = "Đỗ Đức Tâm",
+                            Phone = "0905053133",
+                            Rating = 5.0,
+                            Role = "Mechanic",
+                            ShopName = "Bình Motor Service",
+                            SpecialSkills = "Battery, Engine"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Address = "50 Võ Kỳ Sơn, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 15.980093,
+                            Longitude = 108.243303,
+                            Name = "Phan Đức Phát",
+                            Phone = "0904852830",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Long Motor Service",
+                            SpecialSkills = "Battery, Engine"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Address = "63 Phạm Hùng, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.029228,
+                            Longitude = 108.199907,
+                            Name = "Ngô Bích Bình",
+                            Phone = "0908501318",
+                            Rating = 5.0,
+                            Role = "Mechanic",
+                            ShopName = "Phong Motor Service",
+                            SpecialSkills = "Engine"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Address = "105 Lê Văn Hiến, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.034458000000001,
+                            Longitude = 108.232151,
+                            Name = "Huỳnh Thành Tùng",
+                            Phone = "0903915232",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Tùng Motor Service",
+                            SpecialSkills = "Engine"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Address = "68 Nguyễn Công Trứ, Sơn Trà, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.066469999999999,
+                            Longitude = 108.2236,
+                            Name = "Huỳnh Bích Khánh",
+                            Phone = "0909982648",
+                            Rating = 4.0999999999999996,
+                            Role = "Mechanic",
+                            ShopName = "Tâm Motor Service",
+                            SpecialSkills = "Battery"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Address = "199 Quang Trung, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.03932,
+                            Longitude = 108.204238,
+                            Name = "Phan Bích Phong",
+                            Phone = "0904985127",
+                            Rating = 4.7000000000000002,
+                            Role = "Mechanic",
+                            ShopName = "Phong Motor Service",
+                            SpecialSkills = "All"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Address = "9 Nguyễn Tất Thành, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.062445,
+                            Longitude = 108.162987,
+                            Name = "Phan Quốc Phú",
+                            Phone = "0901219491",
+                            Rating = 4.0,
+                            Role = "Mechanic",
+                            ShopName = "Tùng Motor Service",
+                            SpecialSkills = "Tires"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Address = "27 Quang Trung, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.052001000000001,
+                            Longitude = 108.223574,
+                            Name = "Phạm Thanh Bình",
+                            Phone = "0903561878",
+                            Rating = 4.2000000000000002,
+                            Role = "Mechanic",
+                            ShopName = "Khánh Motor Service",
+                            SpecialSkills = "Tires, Chain"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Address = "47 Nguyễn Lương Bằng, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.125973999999999,
+                            Longitude = 108.154234,
+                            Name = "Huỳnh Bích Tùng",
+                            Phone = "0909362342",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Tùng Motor Service",
+                            SpecialSkills = "Engine"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Address = "56 Cách Mạng Tháng 8, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.002023999999999,
+                            Longitude = 108.21756000000001,
+                            Name = "Nguyễn Thanh Minh",
+                            Phone = "0902696032",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "An Motor Service",
+                            SpecialSkills = "Tires, Chain"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Address = "199 Phan Châu Trinh, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.059090999999999,
+                            Longitude = 108.225767,
+                            Name = "Dương Minh An",
+                            Phone = "0904903212",
+                            Rating = 4.4000000000000004,
+                            Role = "Mechanic",
+                            ShopName = "Hùng Motor Service",
+                            SpecialSkills = "All"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Address = "28 Nguyễn Công Trứ, Sơn Trà, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.112985999999999,
+                            Longitude = 108.231661,
+                            Name = "Đỗ Quốc Long",
+                            Phone = "0901840532",
+                            Rating = 5.0,
+                            Role = "Mechanic",
+                            ShopName = "Giang Motor Service",
+                            SpecialSkills = "Battery, Engine"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            Address = "145 Ông Ích Đường, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.028908000000001,
+                            Longitude = 108.203687,
+                            Name = "Đặng Thị Tâm",
+                            Phone = "0911106910",
+                            Rating = 4.7999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 52,
+                            Address = "10 Hùng Vương, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.069040000000001,
+                            Longitude = 108.21366500000001,
+                            Name = "Ngô Công Bình",
+                            Phone = "0916533587",
+                            Rating = 4.7999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 53,
+                            Address = "143 Phạm Hùng, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.03481,
+                            Longitude = 108.193275,
+                            Name = "Ngô Đình Giang",
+                            Phone = "0919948244",
+                            Rating = 4.2999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 54,
+                            Address = "52 Phạm Văn Đồng, Sơn Trà, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.048188,
+                            Longitude = 108.22012100000001,
+                            Name = "Ngô Minh Cường",
+                            Phone = "0916680580",
+                            Rating = 4.5,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 55,
+                            Address = "21 Phạm Hùng, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.035534999999999,
+                            Longitude = 108.189547,
+                            Name = "Nguyễn Đình Nam",
+                            Phone = "0911678338",
+                            Rating = 4.0,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 56,
+                            Address = "82 Nguyễn Tất Thành, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.112162999999999,
+                            Longitude = 108.173768,
+                            Name = "Dương Thị Em",
+                            Phone = "0917194867",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 57,
+                            Address = "21 Nguyễn Tất Thành, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.113098999999998,
+                            Longitude = 108.151112,
+                            Name = "Nguyễn Quang Phát",
+                            Phone = "0919478952",
+                            Rating = 4.2999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 58,
+                            Address = "74 Hải Phòng, Thanh Khê, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.042921,
+                            Longitude = 108.191585,
+                            Name = "Lê Minh Giang",
+                            Phone = "0912174965",
+                            Rating = 4.7999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 59,
+                            Address = "44 Lê Duẩn, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.036477000000001,
+                            Longitude = 108.219425,
+                            Name = "Võ Công Cường",
+                            Phone = "0911653972",
+                            Rating = 4.5,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 60,
+                            Address = "31 Lê Văn Hiến, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.045397000000001,
+                            Longitude = 108.25018,
+                            Name = "Hoàng Bích Em",
+                            Phone = "0911684008",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 61,
+                            Address = "65 Trường Chinh, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.000947,
+                            Longitude = 108.209388,
+                            Name = "Đặng Quốc Phú",
+                            Phone = "0911779864",
+                            Rating = 4.9000000000000004,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 62,
+                            Address = "107 Điện Biên Phủ, Thanh Khê, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.047107,
+                            Longitude = 108.173079,
+                            Name = "Nguyễn Bích An",
+                            Phone = "0911791236",
+                            Rating = 4.5,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 63,
+                            Address = "195 Phạm Văn Đồng, Sơn Trà, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.046676999999999,
+                            Longitude = 108.243612,
+                            Name = "Võ Minh An",
+                            Phone = "0917803048",
+                            Rating = 4.2999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 64,
+                            Address = "167 Nguyễn Phước Lan, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.013133,
+                            Longitude = 108.180877,
+                            Name = "Trần Đức Phong",
+                            Phone = "0919001885",
+                            Rating = 4.4000000000000004,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 65,
+                            Address = "24 Nguyễn Văn Thoại, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 15.984411,
+                            Longitude = 108.267475,
+                            Name = "Vũ Minh Tâm",
+                            Phone = "0917556438",
+                            Rating = 4.4000000000000004,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 66,
+                            Address = "50 Nguyễn Phước Lan, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.035575999999999,
+                            Longitude = 108.185141,
+                            Name = "Dương Đức Phú",
+                            Phone = "0911060201",
+                            Rating = 4.0999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 67,
+                            Address = "48 Võ Kỳ Sơn, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.015868000000001,
+                            Longitude = 108.231477,
+                            Name = "Bùi Hữu Cường",
+                            Phone = "0918030779",
+                            Rating = 4.2000000000000002,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 68,
+                            Address = "25 Nguyễn Sinh Sắc, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.089531999999998,
+                            Longitude = 108.14960600000001,
+                            Name = "Huỳnh Thành Hùng",
+                            Phone = "0918966653",
+                            Rating = 4.2999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 69,
+                            Address = "28 Nguyễn Phước Lan, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.036221999999999,
+                            Longitude = 108.193398,
+                            Name = "Đỗ Đức Phú",
+                            Phone = "0918876228",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 70,
+                            Address = "139 Cách Mạng Tháng 8, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.028075000000001,
+                            Longitude = 108.205128,
+                            Name = "Võ Thanh Hùng",
+                            Phone = "0911820633",
+                            Rating = 4.2000000000000002,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 71,
+                            Address = "151 Ngô Quyền, Sơn Trà, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.084288000000001,
+                            Longitude = 108.27173999999999,
+                            Name = "Trần Ngọc An",
+                            Phone = "0915129871",
+                            Rating = 4.7999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 72,
+                            Address = "185 Trần Đại Nghĩa, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.019307000000001,
+                            Longitude = 108.25484,
+                            Name = "Phan Minh Tùng",
+                            Phone = "0917411949",
+                            Rating = 4.5,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 73,
+                            Address = "10 Ông Ích Đường, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.008610000000001,
+                            Longitude = 108.18859500000001,
+                            Name = "Nguyễn Văn Khánh",
+                            Phone = "0911013715",
+                            Rating = 4.2999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 74,
+                            Address = "186 Trường Chinh, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.025514999999999,
+                            Longitude = 108.187558,
+                            Name = "Trần Thị An",
+                            Phone = "0911638933",
+                            Rating = 4.7000000000000002,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 75,
+                            Address = "73 Quang Trung, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.055412,
+                            Longitude = 108.20572900000001,
+                            Name = "Huỳnh Quang Dũng",
+                            Phone = "0913114451",
+                            Rating = 4.2000000000000002,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 76,
+                            Address = "151 Hoàng Văn Thái, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.065804,
+                            Longitude = 108.133859,
+                            Name = "Đỗ Thị Phú",
+                            Phone = "0912620975",
+                            Rating = 4.0,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 77,
+                            Address = "108 Nguyễn Sinh Sắc, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.086282000000001,
+                            Longitude = 108.120183,
+                            Name = "Hồ Quốc Nam",
+                            Phone = "0918988512",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 78,
+                            Address = "125 Trần Cao Vân, Thanh Khê, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.059028000000001,
+                            Longitude = 108.174813,
+                            Name = "Đặng Công Minh",
+                            Phone = "0914188333",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 79,
+                            Address = "153 Nguyễn Tất Thành, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.118486000000001,
+                            Longitude = 108.12087099999999,
+                            Name = "Nguyễn Thanh Cường",
+                            Phone = "0911442046",
+                            Rating = 4.7999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 80,
+                            Address = "106 Nguyễn Văn Thoại, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 15.991367,
+                            Longitude = 108.269921,
+                            Name = "Ngô Thành Hùng",
+                            Phone = "0911500713",
+                            Rating = 4.9000000000000004,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 81,
+                            Address = "151 Nguyễn Tri Phương, Thanh Khê, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.067221,
+                            Longitude = 108.193054,
+                            Name = "Phan Ngọc An",
+                            Phone = "0919320211",
+                            Rating = 4.7000000000000002,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 82,
+                            Address = "70 Trường Chinh, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.009409000000002,
+                            Longitude = 108.188119,
+                            Name = "Dương Thành Nam",
+                            Phone = "0917573870",
+                            Rating = 4.7000000000000002,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 83,
+                            Address = "171 Ông Ích Khiêm, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.069873999999999,
+                            Longitude = 108.21108700000001,
+                            Name = "Hồ Thành Tùng",
+                            Phone = "0912019735",
+                            Rating = 4.2000000000000002,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 84,
+                            Address = "106 Bạch Đằng, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.044397,
+                            Longitude = 108.22108299999999,
+                            Name = "Đặng Thu Phương Cường",
+                            Phone = "0918686556",
+                            Rating = 4.4000000000000004,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 85,
+                            Address = "52 Nguyễn Lương Bằng, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.060002000000001,
+                            Longitude = 108.16986300000001,
+                            Name = "Đỗ Hữu Tâm",
+                            Phone = "0912079198",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 86,
+                            Address = "95 Tôn Đức Thắng, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.093751999999999,
+                            Longitude = 108.128536,
+                            Name = "Bùi Quốc Long",
+                            Phone = "0917778396",
+                            Rating = 4.7999999999999998,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 87,
+                            Address = "55 Hồ Xuân Hương, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.030674000000001,
+                            Longitude = 108.256383,
+                            Name = "Phạm Minh Khánh",
+                            Phone = "0914976682",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 88,
+                            Address = "183 Nguyễn Sinh Sắc, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.114165,
+                            Longitude = 108.153295,
+                            Name = "Đỗ Thành Tùng",
+                            Phone = "0916243627",
+                            Rating = 4.4000000000000004,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 89,
+                            Address = "36 Ngô Quyền, Sơn Trà, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.108827999999999,
+                            Longitude = 108.28829399999999,
+                            Name = "Phạm Thu Phương Phát",
+                            Phone = "0913337671",
+                            Rating = 4.7000000000000002,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 90,
+                            Address = "89 Phạm Hùng, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.0121,
+                            Longitude = 108.19916600000001,
+                            Name = "Huỳnh Bích Khánh",
+                            Phone = "0918456728",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 91,
+                            Address = "156 Nguyễn Phước Lan, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.005932000000001,
+                            Longitude = 108.193878,
+                            Name = "Trần Hữu Cường",
+                            Phone = "0916320492",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 92,
+                            Address = "151 Cách Mạng Tháng 8, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.015283,
+                            Longitude = 108.199878,
+                            Name = "Đặng Quốc Giang",
+                            Phone = "0919317121",
+                            Rating = 4.4000000000000004,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 93,
+                            Address = "191 Yết Kiêu, Sơn Trà, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.081333000000001,
+                            Longitude = 108.255394,
+                            Name = "Trần Hữu Giang",
+                            Phone = "0915528351",
+                            Rating = 4.5,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 94,
+                            Address = "103 Trần Phú, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.070554000000001,
+                            Longitude = 108.20197400000001,
+                            Name = "Hồ Thu Phương Long",
+                            Phone = "0912969769",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 95,
+                            Address = "154 Phạm Hùng, Cẩm Lệ, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.009815,
+                            Longitude = 108.19741,
+                            Name = "Đỗ Thành Minh",
+                            Phone = "0917487889",
+                            Rating = 4.0,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 96,
+                            Address = "20 Trần Đại Nghĩa, Ngũ Hành Sơn, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 15.984794000000001,
+                            Longitude = 108.25191,
+                            Name = "Bùi Quốc Phát",
+                            Phone = "0916311257",
+                            Rating = 4.7000000000000002,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 97,
+                            Address = "161 Tôn Đức Thắng, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.083137000000001,
+                            Longitude = 108.152562,
+                            Name = "Ngô Văn Phong",
+                            Phone = "0913231720",
+                            Rating = 4.0999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 98,
+                            Address = "154 Phan Châu Trinh, Hải Châu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.057072999999999,
+                            Longitude = 108.227728,
+                            Name = "Trần Thu Phương An",
+                            Phone = "0912302431",
+                            Rating = 4.5999999999999996,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 99,
+                            Address = "97 Nguyễn Sinh Sắc, Liên Chiểu, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.098796,
+                            Longitude = 108.167351,
+                            Name = "Huỳnh Quốc Phát",
+                            Phone = "0917837151",
+                            Rating = 4.0,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
+                        },
+                        new
+                        {
+                            Id = 100,
+                            Address = "85 Đống Đa, Thanh Khê, Đà Nẵng",
+                            IsAvailable = true,
+                            Latitude = 16.063144999999999,
+                            Longitude = 108.192519,
+                            Name = "Vũ Ngọc Tùng",
+                            Phone = "0917087979",
+                            Rating = 4.5,
+                            Role = "CommunityHelper",
+                            ShopName = "Người hỗ trợ cộng đồng",
+                            SpecialSkills = ""
                         });
                 });
 

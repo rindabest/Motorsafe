@@ -1,5 +1,5 @@
 // PunctureRequestFormRedesigned.jsx
-import React, { useState, useEffect } from 'react'; // ✨ ADDED useEffect
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -31,10 +31,12 @@ const vehicleTypes = [
 
 const problems = {
     bike: [
-        { name: 'Vá săm/lốp', icon: '🔧' },
+        { name: 'Vá ruột/thay ruột', icon: '🔧' },
+        { name: 'Đứt xích/đứt dây ga', icon: '🔗' },
+        { name: 'Kẹt phanh', icon: '🛑' },
+        { name: 'Kích bình', icon: '⚡' },
         { name: 'Bơm hơi', icon: '💨' },
-        { name: 'Sửa xích', icon: '🔗' },
-        { name: 'Lỗi bugi', icon: '⚡' },
+        { name: 'Hết xăng', icon: '⛽' },
     ],
 };
 
@@ -214,25 +216,17 @@ export default function PunctureRequestFormRedesigned() {
             return;
         }
 
-        const vehicleNumberClean = (formData.vehicleNumber || '')
-            .toUpperCase()
-            .replace(/\s/g, '');
-
         try {
             // PRICING ENGINE LOGIC
             const fixedPartPrice = 50000;
-            const distanceFeePerKm = 10000;
-            const mockedDistanceKm = 5; // In reality, we'd calculate from the nearest mechanic
+            const distanceFeePerKm = 2000;
+            const mockedDistanceKm = 5;
             const travelFee = distanceFeePerKm * mockedDistanceKm;
-
-            const currentHour = new Date().getHours();
-            const isNight = currentHour >= 22 || currentHour <= 5;
-            const nightSurcharge = isNight ? 50000 : 0;
-
-            const finalPrice = fixedPartPrice + travelFee + nightSurcharge;
+            const laborCost = (Math.floor(Math.random() * 41) + 10) * 1000;
+            const finalPrice = fixedPartPrice + travelFee + laborCost;
 
             const payload = {
-                mechanicId: 1, // Mock assigned mechanic
+                mechanicId: 1, // Temporary mechanic, will be reassigned on FindingMechanic page
                 issueType: formData.problem,
                 locationLat: formData.latitude,
                 locationLng: formData.longitude,
