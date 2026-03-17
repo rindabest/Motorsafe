@@ -40,6 +40,13 @@ const problems = {
     ],
 };
 
+const serviceSymptoms = {
+    'Vá ruột/thay ruột': 'Bánh xe bị xẹp,hoặc có vật lạ găm vào lốp.',
+    'Đứt xích/đứt dây ga': 'Xe không di chuyển được dù vặn ga',
+    'Kẹt phanh': 'Phanh xe không ăn hoặc không bóp/đạp được.',
+    'Kích bình': 'Xe không đề nổ máy được.',
+};
+
 const inferVehicleTypeFromClass = (vehicleClassRaw) => {
     const vehicleClass = (vehicleClassRaw || '').toLowerCase();
     if (vehicleClass.includes('cycle') || vehicleClass.includes('scooter') || vehicleClass.includes('two wheeler')) {
@@ -218,11 +225,25 @@ export default function PunctureRequestFormRedesigned() {
 
         try {
             // PRICING ENGINE LOGIC
-            const fixedPartPrice = 50000;
+            const isMinorService = formData.problem === 'Bơm hơi' || formData.problem === 'Hết xăng';
+
+            const fixedPartPrice = formData.problem === 'Vá ruột/thay ruột' ? 50000
+                : formData.problem === 'Đứt xích/đứt dây ga' ? 70000
+                : formData.problem === 'Kẹt phanh' ? 40000
+                : formData.problem === 'Kích bình' ? 60000
+                : formData.problem === 'Bơm hơi' ? 10000
+                : formData.problem === 'Hết xăng' ? 25000
+                : 50000;
+
             const distanceFeePerKm = 2000;
             const mockedDistanceKm = 5;
             const travelFee = distanceFeePerKm * mockedDistanceKm;
-            const laborCost = (Math.floor(Math.random() * 41) + 10) * 1000;
+
+            // Labor cost: 10-20k for minor services, 20-50k for others
+            const laborCost = isMinorService
+                ? (Math.floor(Math.random() * 11) + 10) * 1000  // 10k to 20k
+                : (Math.floor(Math.random() * 31) + 20) * 1000; // 20k to 50k
+
             const finalPrice = fixedPartPrice + travelFee + laborCost;
 
             const payload = {
@@ -554,12 +575,14 @@ const Step3_Service = ({ formData, setFormData, isScheduleService }) => (
                         key={problem.name}
                         label={problem.name}
                         emoji={problem.icon}
+                        description={serviceSymptoms[problem.name]}
                         isSelected={formData.problem === problem.name}
                         onClick={() => setFormData(prev => ({ ...prev, problem: problem.name }))}
                     />
                 ));
             })()}
         </div>
+
         <textarea
             placeholder="Thêm ghi chú bổ sung..."
             value={formData.additionalNotes}
@@ -609,10 +632,10 @@ const StepWrapper = ({ title, children }) => (
     </motion.div>
 );
 
-const SelectableCard = ({ label, icon: Icon, emoji, isSelected, onClick }) => (
+const SelectableCard = ({ label, icon: Icon, emoji, description, isSelected, onClick }) => (
     <button
         onClick={onClick}
-        className={`relative group p-4 w-full h-32 flex flex-col items-center justify-center text-center rounded-xl transition-all duration-200
+        className={`relative group p-4 w-full min-h-[140px] h-auto flex flex-col items-center justify-center text-center rounded-xl transition-all duration-200
             ${isSelected
                 ? 'bg-blue-100 shadow-[inset_2px_2px_5px_#BABECC,inset_-5px_-5px_10px_#FFFFFF]'
                 : 'bg-gray-200 shadow-[3px_3px_6px_#BABECC,-3px_-3px_6px_#FFFFFF] hover:shadow-[inset_1px_1px_2px_#BABECC,inset_-1px_-1px_2px_#FFFFFF]'
@@ -620,7 +643,12 @@ const SelectableCard = ({ label, icon: Icon, emoji, isSelected, onClick }) => (
     >
         {Icon && <Icon className={`w-10 h-10 mb-2 transition-colors ${isSelected ? 'text-blue-500' : 'text-gray-500 group-hover:text-blue-500'}`} />}
         {emoji && <span className="text-4xl mb-2">{emoji}</span>}
-        <span className="font-semibold text-sm text-gray-700">{label}</span>
+        <span className="font-bold text-sm text-gray-800">{label}</span>
+        {description && (
+            <p className="mt-2 text-[11px] leading-tight text-gray-500 font-medium">
+                {description}
+            </p>
+        )}
         {isSelected && (
             <div className="absolute top-2 right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center shadow-md">
                 <Check size={14} className="text-white" />
