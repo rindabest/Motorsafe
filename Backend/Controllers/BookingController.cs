@@ -69,8 +69,8 @@ namespace MotorSafe.Backend.Controllers
                     problem = b.IssueType,
                     service_type = b.IssueType,
                     location = b.LocationAddress,
-                    created_at = b.Id, // We don't have CreatedAt in model yet, but we can reuse Id for sorting or add it
-                    updated_at = b.Id
+                    created_at = b.CreatedAt,
+                    updated_at = b.CreatedAt
                 })
                 .ToListAsync();
 
@@ -131,7 +131,7 @@ namespace MotorSafe.Backend.Controllers
             
             if (request.Status == "Completed")
             {
-                booking.CompletedAt = DateTime.UtcNow;
+                booking.CompletedAt = DateTime.Now;
             }
 
             await _context.SaveChangesAsync();
