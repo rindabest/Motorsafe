@@ -17,6 +17,10 @@ namespace MotorSafe.Backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Cccd)
+                .IsUnique();
+
             // Configure relationships
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.Customer)

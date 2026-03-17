@@ -32,6 +32,9 @@ namespace MotorSafe.Backend.Controllers
             if (!string.IsNullOrEmpty(request.Email) && await _context.Users.AnyAsync(u => u.Email == request.Email))
                 return BadRequest(new { message = "Email đã được đăng ký." });
 
+            if (!string.IsNullOrEmpty(request.Cccd) && await _context.Users.AnyAsync(u => u.Cccd == request.Cccd))
+                return BadRequest(new { message = "Số CCCD đã được đăng ký." });
+
             var user = new User
             {
                 FullName = request.FullName,
