@@ -150,7 +150,7 @@ namespace MotorSafe.Backend.Controllers
             var allNearby = mechanics.Select(m =>
             {
                 var distance = CalculateDistance(lat, lng, m.Latitude, m.Longitude);
-                var travelFee = Math.Round((decimal)(distance * 10000)); // 10k per km
+                var travelFee = Math.Round((decimal)(distance * 2500)); // 2500k per km
 
                 decimal baseServicePrice = issueType switch
                 {
