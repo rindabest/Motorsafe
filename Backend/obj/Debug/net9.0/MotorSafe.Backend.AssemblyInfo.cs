@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MotorSafe.Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59f18d14ac41f911051a3d7bde426831e8158664")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+867ddd41893623b86e6721c678a8efafd8e014a7")]
 [assembly: System.Reflection.AssemblyProductAttribute("MotorSafe.Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MotorSafe.Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

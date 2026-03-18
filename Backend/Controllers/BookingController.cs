@@ -147,7 +147,7 @@ namespace MotorSafe.Backend.Controllers
                 .Where(m => m.IsAvailable)
                 .ToListAsync();
 
-            var nearby = mechanics.Select(m =>
+            var allNearby = mechanics.Select(m =>
             {
                 var distance = CalculateDistance(lat, lng, m.Latitude, m.Longitude);
                 var travelFee = Math.Round((decimal)(distance * 10000)); // 10k per km
@@ -176,6 +176,7 @@ namespace MotorSafe.Backend.Controllers
                     m.Phone,
                     m.Address,
                     m.Rating,
+                    m.Role,
                     LocationLat = m.Latitude,
                     LocationLng = m.Longitude,
                     m.SpecialSkills,
@@ -188,10 +189,22 @@ namespace MotorSafe.Backend.Controllers
             })
             .Where(m => m.DistanceKm <= 20) // Search within 20km
             .OrderBy(m => m.DistanceKm)
-            .Take(5)
             .ToList();
 
-            return Ok(new { success = true, mechanics = nearby });
+            IEnumerable<object> result;
+
+            if (issueType == "Bơm hơi" || issueType == "Hết xăng")
+            {
+                var communityHelpers = allNearby.Where(m => m.Role == "CommunityHelper").Take(4);
+                var mechanicsOnly = allNearby.Where(m => m.Role == "Mechanic").Take(1);
+                result = communityHelpers.Concat(mechanicsOnly).OrderBy(m => ((dynamic)m).DistanceKm);
+            }
+            else
+            {
+                result = allNearby.Where(m => m.Role == "Mechanic").Take(5);
+            }
+
+            return Ok(new { success = true, mechanics = result.ToList() });
         }
 
         private static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
