@@ -408,13 +408,7 @@ export default function FindingMechanic() {
                     <Phone size={18} className="text-green-500 shrink-0 mt-0.5" />
                     <p className="font-bold text-gray-800 leading-snug">{selectedMechanic.phone}</p>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <Wrench size={18} className="text-orange-500 shrink-0 mt-0.5" />
-                    <p className="leading-snug">
-                      <span className="block font-bold text-gray-800 mb-0.5">Chuyên môn</span>
-                      <span className="text-gray-500">{selectedMechanic.specialSkills}</span>
-                    </p>
-                  </div>
+
                 </div>
               </div>
 
@@ -525,9 +519,7 @@ export default function FindingMechanic() {
                       <p className="text-xs text-gray-400 ml-8 mt-1">
                         <MapPin size={12} className="inline mr-1" />{mechanic.address}
                       </p>
-                      <p className="text-xs text-gray-400 ml-8 mt-0.5">
-                        <Wrench size={12} className="inline mr-1" />{mechanic.specialSkills}
-                      </p>
+
                     </div>
                     <div className="text-right min-w-[90px]">
                       <p className="text-lg font-bold text-green-600">

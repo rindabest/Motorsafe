@@ -12,16 +12,17 @@ dist
 dist-ssr
 *.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
+# .NET build artifacts
+**/bin/
+**/obj/
 *.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.user
+*.userosscache
+*.sln.docstates
+
+# IDE settings
+.vscode/
+.idea/
+
+# Other
 src/components/MapplsAutosuggest.jsx
-Backend/bin/Debug/net9.0/MotorSafe.Backend.dll
-Backend/bin/Debug/net9.0/MotorSafe.Backend.exe
