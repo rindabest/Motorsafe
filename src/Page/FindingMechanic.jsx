@@ -176,7 +176,8 @@ export default function FindingMechanic() {
                 last_name: "",
                 phone_number: booking.mechanicPhone || "",
                 current_latitude: booking.mechanicLat,
-                current_longitude: booking.mechanicLng
+                current_longitude: booking.mechanicLng,
+                final_price: booking.finalPrice
               },
               estimatedTime: null,
               requestId: request_id
@@ -246,7 +247,8 @@ export default function FindingMechanic() {
             last_name: '',
             phone_number: mechanic.phone,
             current_latitude: mechanic.locationLat,
-            current_longitude: mechanic.locationLng
+            current_longitude: mechanic.locationLng,
+            final_price: mechanic.estimatedPrice
           },
           estimatedTime: null,
           requestId: request_id

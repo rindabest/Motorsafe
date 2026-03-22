@@ -104,16 +104,13 @@ const OrderHistoryCard = React.memo(({ order }) => {
             </div>
 
             {/* Actions */}
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button className="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-200 transition-all flex items-center justify-center gap-2">
-                    Xem chi tiết <ChevronRight size={16} />
-                </button>
-                {status === 'PENDING' && (
+            {status === 'PENDING' && (
+                <div className="mt-4 grid grid-cols-1 gap-3">
                     <button className="w-full py-3 bg-white text-gray-800 border border-gray-200 rounded-xl font-bold text-sm hover:bg-gray-50 transition-all">
                         Hủy yêu cầu
                     </button>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 });

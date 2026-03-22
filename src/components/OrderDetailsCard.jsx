@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { MapPin, FileText, Car, Bike, ClipboardList, MessageSquare } from "lucide-react";
+import { MapPin, FileText, Car, Bike, ClipboardList, MessageSquare, Tag } from "lucide-react";
 
-const OrderDetailsCard = () => {
+const OrderDetailsCard = ({ price }) => {
     const [orderData, setOrderData] = useState(null);
 
     // Read data from localStorage
@@ -74,10 +74,25 @@ const OrderDetailsCard = () => {
                 </p>
             </div>
 
+            {/* Price section */}
+            {price && (
+                <div
+                    className={`flex justify-between items-center px-4 py-2 border-t border-gray-200 mt-2`}
+                >
+                    <div className="flex items-center gap-3">
+                        <Tag className="text-green-500" size={20} />
+                        <span className="font-semibold text-gray-700">Giá định mức:</span>
+                    </div>
+                    <span className="font-mono text-base font-bold text-green-600">
+                        {price.toLocaleString()}đ
+                    </span>
+                </div>
+            )}
+
             {/* Additional Notes */}
             {additionalNotes && (
                 <div
-                    className={`flex flex-col gap-2 px-4   py-2 `}
+                    className={`flex flex-col gap-2 px-4 py-2 border-t border-gray-200`}
                 >
                     <div className="flex items-center gap-3 mb-1">
                         <MessageSquare className="text-blue-500" size={20} />

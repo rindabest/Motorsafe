@@ -1,45 +1,233 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Car, Bike, Clock, Phone, Wifi, WifiOff, X, MapPin, Wrench, NotebookPen, PlayCircle } from 'lucide-react';
-import AdBanner from '../components/AdBanner';
+import { Car, Clock, Phone, Wifi, WifiOff, X, MapPin, Wrench, CheckCircle, MessageCircle, Send, Home } from 'lucide-react';
 import api from '../utils/api';
 import { useWebSocket } from '../context/WebSocketContext';
 import { toast } from 'react-hot-toast';
-import maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import OrderDetailsCard from '../components/OrderDetailsCard';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ACTIVE_JOB_STORAGE_KEY = 'activeJobData';
 const FORM_STORAGE_KEY = 'punctureRequestFormData';
 
-// --- Haversine Helpers ---
-function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-  var R = 6371;
-  var dLat = deg2rad(lat2 - lat1);
-  var dLon = deg2rad(lon2 - lon1);
-  var a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-function deg2rad(deg) {
-  return deg * (Math.PI / 180);
-}
-function calculateETA(userCoords, mechCoords) {
-  if (!userCoords || !mechCoords) return null;
-  const distance = getDistanceFromLatLonInKm(
-    userCoords.lat,
-    userCoords.lng,
-    mechCoords.lat,
-    mechCoords.lng
+// --- 4 trạng thái ---
+const STATUSES = [
+  { key: 'preparing', label: 'Chuẩn bị', desc: 'Thợ đang chuẩn bị dụng cụ', icon: Wrench, color: 'blue' },
+  { key: 'moving', label: 'Đang di chuyển', desc: 'Thợ đang trên đường đến', icon: Car, color: 'orange' },
+  { key: 'arrived', label: 'Đã đến nơi', desc: 'Thợ đã đến vị trí của bạn', icon: MapPin, color: 'green' },
+  { key: 'completed', label: 'Hoàn thành', desc: 'Dịch vụ đã hoàn tất', icon: CheckCircle, color: 'emerald' },
+];
+
+const STEP_DURATION = 20; // giây
+
+// --- Mock responses for auto-responder bot ---
+const MOCK_RESPONSES = [
+  'Dạ tôi đang trên đường',
+  'Bạn đợi tôi 5 phút nhé',
+  'Tôi sắp tới nơi rồi',
+  'Dạ được ạ, tôi sẽ xử lý ngay',
+  'Cảm ơn bạn đã chờ đợi',
+  'Tôi đang chuẩn bị dụng cụ',
+  'Khoảng 10 phút nữa tôi tới',
+  'Dạ vâng, tôi nhận được thông tin rồi',
+];
+
+// --- Helper: get first character of name ---
+const getInitial = (name) => {
+  if (!name) return '?';
+  return name.charAt(0).toUpperCase();
+};
+
+// --- Avatar with initial letter ---
+const InitialAvatar = ({ name, size = 'w-16 h-16 text-2xl' }) => {
+  const colors = [
+    'from-blue-500 to-blue-600',
+    'from-emerald-500 to-emerald-600',
+    'from-orange-500 to-orange-600',
+    'from-purple-500 to-purple-600',
+    'from-pink-500 to-pink-600',
+    'from-teal-500 to-teal-600',
+  ];
+  const colorIndex = (name || '').charCodeAt(0) % colors.length;
+  const gradient = colors[colorIndex] || colors[0];
+
+  return (
+    <div className={`${size} rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-bold shadow-md border-4 border-slate-200 select-none`}>
+      {getInitial(name)}
+    </div>
   );
-  const avgSpeedKmh = 30;
-  const timeMinutes = Math.round((distance / avgSpeedKmh) * 60);
-  return timeMinutes + 1;
-}
+};
+
+// --- ChatBox Component ---
+const ChatBox = ({ isOpen, onClose, mechanicName, currentStep }) => {
+  const [messages, setMessages] = useState([
+    { sender: 'mechanic', text: `Xin chào! Tôi là ${mechanicName}. Bạn cần hỗ trợ gì ạ?`, time: new Date() },
+  ]);
+  const [inputText, setInputText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const isCompleted = currentStep >= 3;
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
+
+  useEffect(() => {
+    if (isOpen && !isCompleted) {
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
+  }, [isOpen, isCompleted]);
+
+  const sendMessage = () => {
+    const text = inputText.trim();
+    if (!text || isCompleted) return;
+
+    const customerMsg = { sender: 'customer', text, time: new Date() };
+    setMessages(prev => [...prev, customerMsg]);
+    setInputText('');
+
+    // Auto-responder with random delay 2-3s
+    setIsTyping(true);
+    const delay = 2000 + Math.random() * 1000;
+    setTimeout(() => {
+      const randomResponse = MOCK_RESPONSES[Math.floor(Math.random() * MOCK_RESPONSES.length)];
+      const botMsg = { sender: 'mechanic', text: randomResponse, time: new Date() };
+      setMessages(prev => [...prev, botMsg]);
+      setIsTyping(false);
+    }, delay);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const formatTime = (date) => {
+    return new Date(date).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex flex-col bg-slate-200"
+    >
+      {/* Chat Header */}
+      <div className="bg-slate-200 shadow-[0_4px_10px_#b8bec9] px-4 py-3 flex items-center gap-3 z-10">
+        <button
+          onClick={onClose}
+          className="p-2 rounded-full shadow-[4px_4px_8px_#b8bec9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_3px_3px_6px_#b8bec9,_inset_-3px_-3px_6px_#ffffff] transition-all"
+        >
+          <X size={18} className="text-slate-600" />
+        </button>
+        <InitialAvatar name={mechanicName} size="w-10 h-10 text-lg" />
+        <div className="flex-grow">
+          <h3 className="font-bold text-slate-800 text-sm">{mechanicName}</h3>
+          <p className="text-xs text-slate-500">
+            {isCompleted ? 'Đơn hàng đã hoàn thành' : isTyping ? 'Đang nhập...' : 'Trực tuyến'}
+          </p>
+        </div>
+        {isCompleted && (
+          <span className="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-semibold">
+            Chỉ đọc
+          </span>
+        )}
+      </div>
+
+      {/* Messages Area */}
+      <div className="flex-grow overflow-y-auto px-4 py-3 space-y-3">
+        {messages.map((msg, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className={`flex ${msg.sender === 'customer' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div className={`flex items-end gap-2 max-w-[80%] ${msg.sender === 'customer' ? 'flex-row-reverse' : 'flex-row'
+              }`}>
+              {msg.sender === 'mechanic' && (
+                <InitialAvatar name={mechanicName} size="w-7 h-7 text-xs" />
+              )}
+              <div>
+                <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${msg.sender === 'customer'
+                    ? 'bg-blue-500 text-white rounded-br-md shadow-[3px_3px_6px_#b8bec9]'
+                    : 'bg-white text-slate-800 rounded-bl-md shadow-[3px_3px_6px_#b8bec9,_-3px_-3px_6px_#ffffff]'
+                  }`}>
+                  {msg.text}
+                </div>
+                <p className={`text-[10px] mt-1 text-slate-400 ${msg.sender === 'customer' ? 'text-right' : 'text-left'
+                  }`}>
+                  {formatTime(msg.time)}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+
+        {/* Typing indicator */}
+        {isTyping && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-start"
+          >
+            <div className="flex items-end gap-2">
+              <InitialAvatar name={mechanicName} size="w-7 h-7 text-xs" />
+              <div className="bg-white px-4 py-3 rounded-2xl rounded-bl-md shadow-[3px_3px_6px_#b8bec9,_-3px_-3px_6px_#ffffff]">
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input Area */}
+      <div className="bg-slate-200 px-4 py-3 shadow-[0_-4px_10px_#b8bec9]">
+        {isCompleted ? (
+          <div className="text-center py-3 text-sm text-slate-500 font-medium bg-slate-100 rounded-xl">
+            Đơn hàng đã hoàn thành — Không thể gửi tin nhắn mới
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <input
+              ref={inputRef}
+              type="text"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Nhập tin nhắn..."
+              className="flex-grow bg-white rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 shadow-[inset_4px_4px_8px_#b8bec9,_inset_-4px_-4px_8px_#ffffff] outline-none focus:ring-2 focus:ring-blue-300 transition-all"
+            />
+            <button
+              onClick={sendMessage}
+              disabled={!inputText.trim()}
+              className="p-3 rounded-xl bg-blue-500 text-white shadow-[4px_4px_8px_#b8bec9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_3px_3px_6px_#3b82f6] transition-all disabled:opacity-40 disabled:shadow-none"
+            >
+              <Send size={18} />
+            </button>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+};
 
 const ConnectionStatus = () => {
   const { connectionStatus } = useWebSocket();
@@ -63,6 +251,96 @@ const ConnectionStatus = () => {
     </div>
   );
 };
+
+// --- Status Timeline Component ---
+const StatusTimeline = ({ currentStep }) => {
+  const activeColor = STATUSES[currentStep]?.color || 'blue';
+  const bgColorMap = {
+    blue: '#3b82f6',
+    orange: '#f97316',
+    green: '#22c55e',
+    emerald: '#10b981',
+  };
+  const fillColor = bgColorMap[activeColor] || bgColorMap.blue;
+
+  // Progress percentage: each completed step = 1/(n-1) of the line
+  const totalSegments = STATUSES.length - 1;
+  const progressPercent = Math.min((currentStep / totalSegments) * 100, 100);
+
+  return (
+    <div className="w-full px-4">
+      {/* Container for the timeline */}
+      <div className="relative flex items-start justify-between">
+
+        {/* Background track line (gray) — aligned from center of first circle to center of last circle */}
+        <div
+          className="absolute top-[18px] flex items-center"
+          style={{ zIndex: 0, left: 'calc(100% / 8)', right: 'calc(100% / 8)' }}
+        >
+          <div className="w-full h-[3px] bg-slate-200 rounded-full relative overflow-hidden">
+            {/* Filled progress line */}
+            <motion.div
+              className="absolute top-0 left-0 h-full rounded-full"
+              style={{ backgroundColor: fillColor }}
+              initial={{ width: '0%' }}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ duration: 0.8, ease: 'easeInOut' }}
+            />
+          </div>
+        </div>
+
+        {/* Step circles + labels */}
+        {STATUSES.map((step, index) => {
+          const isCompleted = index < currentStep;
+          const isActive = index === currentStep;
+          const isFuture = index > currentStep;
+          const Icon = step.icon;
+
+          const colorMap = {
+            blue: { bg: 'bg-blue-500', ring: 'ring-blue-200', text: 'text-blue-600' },
+            orange: { bg: 'bg-orange-500', ring: 'ring-orange-200', text: 'text-orange-600' },
+            green: { bg: 'bg-green-500', ring: 'ring-green-200', text: 'text-green-600' },
+            emerald: { bg: 'bg-emerald-500', ring: 'ring-emerald-200', text: 'text-emerald-600' },
+          };
+          const stepColor = colorMap[step.color] || colorMap.blue;
+
+          return (
+            <div key={step.key} className="flex flex-col items-center relative" style={{ flex: 1, zIndex: 1 }}>
+              {/* Icon circle */}
+              <motion.div
+                initial={false}
+                animate={{ scale: isActive ? 1.15 : 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 border-[3px]
+                  ${isCompleted ? `${stepColor.bg} text-white shadow-lg border-white` : ''}
+                  ${isActive ? `${stepColor.bg} text-white shadow-lg ring-4 ${stepColor.ring} border-white` : ''}
+                  ${isFuture ? 'bg-white text-slate-400 border-slate-200' : ''}
+                `}
+              >
+                {isCompleted ? (
+                  <CheckCircle size={20} />
+                ) : (
+                  <Icon size={18} className={isActive ? 'animate-pulse' : ''} />
+                )}
+              </motion.div>
+
+              {/* Label */}
+              <p className={`mt-2 text-[11px] font-bold text-center leading-tight transition-colors duration-300
+                ${isCompleted ? stepColor.text : ''}
+                ${isActive ? stepColor.text : ''}
+                ${isFuture ? 'text-slate-400' : ''}
+              `}>
+                {step.label}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+
 
 export default function MechanicFound() {
   const navigate = useNavigate();
@@ -103,11 +381,10 @@ export default function MechanicFound() {
     try {
       const saved = JSON.parse(localStorage.getItem(ACTIVE_JOB_STORAGE_KEY));
       if (saved && (saved.request_id === paramRequestId || !saved.request_id)) {
-        console.log("🧩 Restored mechanic data from localStorage:", saved);
         return saved;
       }
     } catch (err) {
-      console.error("❌ Failed to parse localStorage mechanic data:", err);
+      console.error("Failed to parse localStorage mechanic data:", err);
     }
 
     return { mechanic: null, jobDetails: null, request_id: paramRequestId };
@@ -118,26 +395,13 @@ export default function MechanicFound() {
   const [mechanic, setMechanic] = useState(initialState.mechanic);
   const [jobDetails] = useState(initialState.jobDetails);
   const [jobRequestDetails, setJobRequestDetails] = useState(null);
-  const [estimatedTime, setEstimatedTime] = useState(null);
   const [mechanicArrived, setMechanicArrived] = useState(false);
-  const [mechanicLocation, setMechanicLocation] = useState(() =>
-    initialState.mechanic?.current_latitude
-      ? { lat: initialState.mechanic.current_latitude, lng: initialState.mechanic.current_longitude }
-      : null
-  );
-  const [userLocation, setUserLocation] = useState(null);
   const [isCancelModalOpen, setCancelModalOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState('');
-  const username = "User";
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
-  // Ad Modal State
-  const [showAdModal, setShowAdModal] = useState(false);
-  const [selectedAdTitle, setSelectedAdTitle] = useState('');
-
-  const mapContainerRef = useRef(null);
-  const mapInstanceRef = useRef(null);
-  const userMarkerRef = useRef(null);
-  const mechanicMarkerRef = useRef(null);
+  // --- Timeline State ---
+  const [currentStep, setCurrentStep] = useState(0);
 
   // --- Helpers ---
   const clearActiveJobData = () => {
@@ -160,9 +424,6 @@ export default function MechanicFound() {
       if (saved) {
         const data = JSON.parse(saved);
         setJobRequestDetails(data);
-        if (data.latitude && data.longitude) {
-          setUserLocation({ lat: data.latitude, lng: data.longitude });
-        }
       } else {
         toast.error("Không thể tải chi tiết công việc.");
       }
@@ -172,7 +433,48 @@ export default function MechanicFound() {
     }
   }, []);
 
-  // HTTP Polling
+  // --- Auto-advance timeline every 15 seconds ---
+  useEffect(() => {
+    if (currentStep >= STATUSES.length - 1) return; // Đã hoàn thành → dừng
+
+    const timer = setInterval(() => {
+      setCurrentStep(prev => prev + 1);
+    }, STEP_DURATION * 1000);
+
+    return () => clearInterval(timer);
+  }, [currentStep]);
+
+  // --- Handle step transitions ---
+  useEffect(() => {
+    if (currentStep === 1) {
+      // Đang di chuyển
+      toast.success("Thợ đang trên đường đến!", { icon: '🚗' });
+    }
+
+    if (currentStep === 2) {
+      // Đã đến nơi
+      if (!mechanicArrived) {
+        toast.success("Thợ đã đến!", { icon: '📍' });
+        setMechanicArrived(true);
+      }
+    }
+
+    if (currentStep === 3) {
+      // Hoàn thành → simulate & redirect
+      const completeJob = async () => {
+        try {
+          await api.put(`/bookings/${paramRequestId}/simulate-status`, { status: 'Completed' });
+        } catch (err) {
+          console.error('Failed to simulate completion:', err);
+        }
+        toast.success("Yêu cầu đã được hoàn tất.", { icon: '✅' });
+        clearActiveJobData();
+      };
+      completeJob();
+    }
+  }, [currentStep]);
+
+  // HTTP Polling (keep for real-time backend sync)
   useEffect(() => {
     let intervalId;
     const pollBookingStatus = async () => {
@@ -181,14 +483,8 @@ export default function MechanicFound() {
         const booking = response.booking;
 
         if (booking) {
-          if (booking.status === 'Arrived') {
-            if (!mechanicArrived) {
-              toast.success("Thợ đã đến!");
-              setMechanicArrived(true);
-            }
-          } else if (booking.status === 'Completed' || booking.status === 'Cancelled') {
-            const statusVn = booking.status === 'Completed' ? 'hoàn tất' : 'hủy';
-            toast.success(`Yêu cầu đã được ${statusVn}.`);
+          if (booking.status === 'Cancelled') {
+            toast.success("Yêu cầu đã được hủy.");
             clearActiveJobData();
             navigate('/');
           }
@@ -198,222 +494,11 @@ export default function MechanicFound() {
       }
     };
 
-    // Initial poll
     pollBookingStatus();
-    // Poll every 5 seconds
     intervalId = setInterval(pollBookingStatus, 5000);
 
     return () => clearInterval(intervalId);
-  }, [navigate, paramRequestId, mechanicArrived]);
-
-  const handleSimulateStatus = async (status) => {
-    try {
-      await api.put(`/bookings/${paramRequestId}/simulate-status`, { status });
-      const statusVn = status === 'Arrived' ? 'Đã đến' : 'Hoàn tất';
-      toast.success(`Mô phỏng: Trạng thái đã đổi thành ${statusVn}`);
-    } catch (err) {
-      toast.error('Mô phỏng thất bại');
-    }
-  };
-
-  // Recalculate ETA
-  useEffect(() => {
-    if (userLocation && mechanicLocation) {
-      const eta = calculateETA(userLocation, mechanicLocation);
-      setEstimatedTime(eta);
-    }
-  }, [userLocation, mechanicLocation]);
-
-  const [mapAds, setMapAds] = useState([]);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
-  const adMarkersRef = useRef([]);
-
-  // Fetch Map Ads
-  useEffect(() => {
-    const fetchAds = async () => {
-      try {
-        const response = await api.get('/core/map-ads/');
-        setMapAds(response.data);
-      } catch (error) {
-        console.error("Failed to load map ads", error);
-      }
-    };
-    fetchAds();
-  }, []);
-
-  // --- Map Setup ---
-  useEffect(() => {
-    if (mechanicArrived) return; // Don't initialize map if mechanic arrived
-
-    if (!mapContainerRef.current || !mechanic || !userLocation || !mechanicLocation) return;
-
-    if (!mapInstanceRef.current) {
-      const map = new maplibregl.Map({
-        container: mapContainerRef.current,
-        center: [(userLocation.lng + mechanicLocation.lng) / 2, (userLocation.lat + mechanicLocation.lat) / 2],
-        zoom: 13,
-        style: `https://api.maptiler.com/maps/019b64a4-ef96-7e83-9a23-dde0df92b2ba/style.json?key=wf1HtIzvVsvPfvNrhwPz`,
-        attributionControl: false,
-      });
-      mapInstanceRef.current = map;
-
-      map.on('load', () => {
-        setIsMapLoaded(true);
-        const userEl = document.createElement('img');
-        userEl.src = '/ms.png';
-        userEl.style.width = '35px';
-        userEl.style.height = '35px';
-        userEl.style.borderRadius = '50%';
-        userEl.style.border = '3px solid #10b981';
-        userMarkerRef.current = new maplibregl.Marker(userEl)
-          .setLngLat([userLocation.lng, userLocation.lat])
-          .addTo(map);
-
-        const mechEl = document.createElement('img');
-        mechEl.src = mechanic.Mechanic_profile_pic || '/ms.png';
-        mechEl.style.width = '35px';
-        mechEl.style.height = '35px';
-        mechEl.style.borderRadius = '50%';
-        mechEl.style.border = '3px solid #3b82f6';
-        mechanicMarkerRef.current = new maplibregl.Marker(mechEl)
-          .setLngLat([mechanicLocation.lng, mechanicLocation.lat])
-          .addTo(map);
-
-        fitMapToMarkers();
-      });
-    }
-
-    if (mechanicLocation && mechanicMarkerRef.current) {
-      mechanicMarkerRef.current.setLngLat([mechanicLocation.lng, mechanicLocation.lat]);
-      fitMapToMarkers();
-    }
-
-    if (userLocation && userMarkerRef.current) {
-      userMarkerRef.current.setLngLat([userLocation.lng, userLocation.lat]);
-    }
-  }, [mechanic, mechanicLocation, userLocation, mechanicArrived]);
-
-  // Handle Ads on Map
-  useEffect(() => {
-    if (!isMapLoaded || !mapInstanceRef.current || mapAds.length === 0 || mechanicArrived) return;
-
-    // Clear existing ad markers
-    adMarkersRef.current.forEach(marker => marker.remove());
-    adMarkersRef.current = [];
-
-    mapAds.forEach(ad => {
-      // Container mimic: bg-white p-0.5 rounded-full border-2 border-amber-400 shadow-lg
-      const el = document.createElement('div');
-      el.className = 'ad-marker-container';
-      el.style.width = '36px';
-      el.style.height = '36px';
-      el.style.backgroundColor = 'white';
-      el.style.padding = '2px'; // p-0.5 equivalent
-      el.style.borderRadius = '50%';
-      el.style.border = '2px solid #fbbf24'; // amber-400
-      el.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'; // shadow-lg
-      el.style.cursor = 'pointer';
-      el.style.overflow = 'hidden';
-
-      // Image mimic: w-full h-full rounded-full object-cover
-      const img = document.createElement('div');
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.borderRadius = '50%';
-      img.style.backgroundImage = `url(${ad.logo})`;
-      img.style.backgroundSize = 'cover';
-      img.style.backgroundPosition = 'center';
-
-      el.appendChild(img);
-
-      const popupHTML = `
-        <div class="p-2 text-center">
-          <h3 class="font-bold text-sm">${ad.businessName}</h3>
-          <p class="text-xs text-gray-600">${ad.description || ''}</p>
-          ${ad.offerTitle ? `<div class="mt-1 text-xs font-bold text-red-500">${ad.offerTitle}</div>` : ''}
-          ${ad.link ? `<a href="${ad.link}" target="_blank" class="text-blue-500 text-xs underline mt-1 block">Truy cập trang web</a>` : ''}
-        </div>
-      `;
-
-      const popup = new maplibregl.Popup({ offset: 15, closeButton: false }).setHTML(popupHTML);
-
-      const marker = new maplibregl.Marker({ element: el })
-        .setLngLat([ad.longitude, ad.latitude])
-        .setPopup(popup)
-        .addTo(mapInstanceRef.current);
-
-      adMarkersRef.current.push(marker);
-    });
-
-    // Add 2-3 More "Map Ads" placeholders as requested
-    const adPlaceholders = [
-      { businessName: "Quảng cáo của bạn", longitude: 0.005, latitude: 0.005, color: "#f59e0b" },
-      { businessName: "Doanh nghiệp trên bản đồ", longitude: -0.005, latitude: 0.005, color: "#ec4899" },
-      { businessName: "Quảng cáo", longitude: 0.008, latitude: -0.005, color: "#8b5cf6" },
-      { businessName: "Quảng cáo ngay", longitude: -0.008, latitude: -0.008, color: "#ef4444" }
-    ];
-
-    if (userLocation) {
-      adPlaceholders.forEach(ad => {
-        const adEl = document.createElement('div');
-        adEl.style.cssText = `
-          position: absolute;
-          background: ${ad.color};
-          color: white;
-          padding: 8px 14px;
-          border-radius: 12px;
-          font-size: 11px;
-          font-weight: 900;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-          border: 2px solid white;
-          cursor: pointer;
-          white-space: nowrap;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 1px;
-          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-          animation: pulse 2s infinite ease-in-out;
-        `;
-
-        adEl.innerHTML = `
-          <div style="font-size: 7px; opacity: 0.7; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">QUẢNG CÁO</div>
-          <div>${ad.businessName}</div>
-        `;
-
-        adEl.onmouseenter = () => {
-          adEl.style.transform = 'scale(1.15) translateY(-5px)';
-          adEl.style.zIndex = '2000';
-          adEl.style.boxShadow = `0 10px 25px ${ad.color}80`;
-        };
-        adEl.onmouseleave = () => {
-          adEl.style.transform = 'scale(1) translateY(0)';
-          adEl.style.zIndex = 'auto';
-          adEl.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
-        };
-
-        adEl.onclick = () => {
-          setSelectedAdTitle(ad.businessName);
-          setShowAdModal(true);
-        };
-
-        const marker = new maplibregl.Marker({ element: adEl })
-          .setLngLat([userLocation.lng + ad.longitude, userLocation.lat + ad.latitude])
-          .addTo(mapInstanceRef.current);
-
-        adMarkersRef.current.push(marker);
-      });
-    }
-  }, [mapAds, isMapLoaded, mechanicArrived, userLocation]);
-
-  const fitMapToMarkers = () => {
-    const map = mapInstanceRef.current;
-    if (!map || !userLocation || !mechanicLocation) return;
-    const bounds = new maplibregl.LngLatBounds();
-    bounds.extend([userLocation.lng, userLocation.lat]);
-    bounds.extend([mechanicLocation.lng, mechanicLocation.lat]);
-    map.fitBounds(bounds, { padding: 80, maxZoom: 15, duration: 1000 });
-  };
+  }, [navigate, paramRequestId]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -436,9 +521,7 @@ export default function MechanicFound() {
       return;
     }
     try {
-      // Update backend status to Cancelled
       await api.put(`/bookings/${paramRequestId}/simulate-status`, { status: 'Cancelled' });
-
       clearActiveJobData();
       toast.success("Yêu cầu sửa chữa đã được hủy.");
       navigate('/');
@@ -453,171 +536,130 @@ export default function MechanicFound() {
     return <div className={`min-h-screen ${baseBg} flex items-center justify-center ${primaryTextColor}`}>Đang tải chi tiết công việc...</div>;
   }
 
+  const currentStatus = STATUSES[currentStep];
+
   return (
     <>
       <ConnectionStatus />
       <div className={`min-h-screen ${baseBg} ${primaryTextColor} pt-28 font-sans`}>
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10">
-          <div className={`${baseBg} rounded-b-3xl p-5 ${neumorphicShadow} flex items-center justify-between`}>
-            <div>
-              <h1 className="text-xl font-bold text-slate-800">
-                {mechanicArrived
-                  ? "Thợ đã đến!"
-                  : estimatedTime
-                    ? `Sẽ đến trong khoảng ~${estimatedTime} phút`
-                    : 'Đang tính thời gian đến...'}
-              </h1>
-              <p className={`${secondaryTextColor} text-sm`}>
-                {mechanicArrived
-                  ? "Vui lòng gặp thợ sửa xe của bạn"
-                  : "Thợ sửa xe đang trên đường đến"}
-              </p>
+          <div className={`${baseBg} rounded-b-3xl p-5 ${neumorphicShadow}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-xl font-bold text-slate-800">
+                  {currentStatus.label}
+                </h1>
+                <p className={`${secondaryTextColor} text-sm`}>
+                  {currentStatus.desc}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                {currentStep === 3 ? (
+                  <button
+                    onClick={() => navigate('/')}
+                    className={`${baseBg} px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-bold text-emerald-700 transition-all duration-200 ${neumorphicShadow} ${buttonActiveShadow} flex items-center justify-center gap-2`}
+                  >
+                    <Home size={18} />
+                    <span>Về trang chủ</span>
+                  </button>
+                ) : (
+                  <div className={`p-3 rounded-full ${neumorphicInsetShadow}`}>
+                    {React.createElement(currentStatus.icon, {
+                      size: 24,
+                      className: currentStep === 2 ? 'text-green-500 animate-bounce' : 'text-blue-500'
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
-            <div className={`p-3 rounded-full ${neumorphicInsetShadow}`}>
-              {mechanicArrived
-                ? <MapPin size={24} className="text-red-500 animate-bounce" />
-                : <Clock size={24} className="text-green-600" />
-              }
-            </div>
+
+            {/* Status Timeline */}
+            <StatusTimeline currentStep={currentStep} />
           </div>
         </div>
 
-        {/* Ad Modal */}
-        <AnimatePresence>
-          {showAdModal && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl overflow-hidden relative"
-              >
-                <button
-                  onClick={() => setShowAdModal(false)}
-                  className="absolute top-6 right-6 p-2 text-gray-400 hover:bg-gray-100 rounded-xl transition-colors"
-                >
-                  <div className="w-5 h-5 flex items-center justify-center">✕</div>
-                </button>
-
-                <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <div className="w-8 h-8 flex items-center justify-center text-3xl">🎯</div>
-                  </div>
-                  <h3 className="text-2xl font-black text-gray-900">{selectedAdTitle}</h3>
-                  <p className="text-gray-500 text-sm">Phát triển kinh doanh bằng cách quảng cáo với MotorSafe.</p>
-                </div>
-
-                <form onSubmit={(e) => { e.preventDefault(); toast.success('Interest registered!'); setShowAdModal(false); }}>
-                  <div className="space-y-4 mb-6">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Tên doanh nghiệp</label>
-                      <input
-                        type="text"
-                        placeholder="Doanh nghiệp của bạn"
-                        className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-blue-500 outline-none font-bold"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Số điện thoại liên hệ</label>
-                      <input
-                        type="tel"
-                        placeholder="09xx xxx xxx"
-                        className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-blue-500 outline-none font-bold"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-lg shadow-lg shadow-blue-200 transition-all active:scale-95 flex items-center justify-center gap-2"
-                  >
-                    Nhận báo giá & thông tin
-                  </button>
-                </form>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
         {/* Content */}
-        <div className="flex flex-col p-3 gap-5">
+        <div className="flex flex-col p-3 gap-5 mt-8">
           {/* Mechanic Info */}
           <div className={`${baseBg} rounded-3xl ${neumorphicShadow} p-5 flex items-center gap-4`}>
-            <img
-              src={mechanic.Mechanic_profile_pic || '/ms.png'}
-              alt="Thợ sửa xe"
-              className="w-16 h-16 rounded-full object-cover border-4 border-slate-200 shadow-md"
-            />
+            <InitialAvatar name={mechanic.first_name} />
             <div className="flex-grow">
               <h3 className="text-lg font-bold text-slate-800">{mechanic.first_name} {mechanic.last_name}</h3>
               <p className={`text-sm ${secondaryTextColor}`}>Thợ đã xác minh</p>
             </div>
-            <button
-              onClick={handleCallMechanic}
-              className={`${baseBg} p-3 rounded-full transition-all duration-200 ${neumorphicShadow} ${buttonActiveShadow}`}
-            >
-              <Phone size={20} className="text-green-600" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsChatOpen(true)}
+                className={`${baseBg} p-3 rounded-full transition-all duration-200 ${neumorphicShadow} ${buttonActiveShadow} relative`}
+              >
+                <MessageCircle size={20} className="text-blue-600" />
+              </button>
+              <button
+                onClick={handleCallMechanic}
+                className={`${baseBg} p-3 rounded-full transition-all duration-200 ${neumorphicShadow} ${buttonActiveShadow}`}
+              >
+                <Phone size={20} className="text-green-600" />
+              </button>
+            </div>
           </div>
 
-          {/* Map or Arrival UI */}
-          {!mechanicArrived ? (
-            <div className={`rounded-3xl p-2 ${neumorphicInsetShadow}`}>
-              <div ref={mapContainerRef} className="w-full h-80 rounded-2xl" />
-            </div>
-          ) : (
-            <div className={`rounded-3xl p-6 ${neumorphicShadow} bg-green-50 flex flex-col items-center justify-center text-center`}>
-              <div className="p-4 bg-green-100 rounded-full mb-4 animate-pulse">
-                <Wrench size={48} className="text-green-600" />
-              </div>
-              <h2 className="text-xl font-bold text-green-800 mb-2">Thợ sửa xe đã đến</h2>
-              <p className="text-green-600">Vui lòng di chuyển đến gặp thợ tại vị trí của bạn.</p>
-            </div>
-          )}
+          {/* Arrival UI when mechanic has arrived */}
+          <AnimatePresence>
+            {mechanicArrived && currentStep < 3 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className={`rounded-3xl p-6 ${neumorphicShadow} bg-green-50 flex flex-col items-center justify-center text-center`}
+              >
+                <div className="p-4 bg-green-100 rounded-full mb-4 animate-pulse">
+                  <Wrench size={48} className="text-green-600" />
+                </div>
+                <h2 className="text-xl font-bold text-green-800 mb-2">Thợ sửa xe đã đến</h2>
+                <p className="text-green-600">Vui lòng di chuyển đến gặp thợ tại vị trí của bạn.</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Completion UI */}
+          <AnimatePresence>
+            {currentStep === 3 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className={`rounded-3xl p-6 ${neumorphicShadow} bg-emerald-50 flex flex-col items-center justify-center text-center`}
+              >
+                <div className="p-4 bg-emerald-100 rounded-full mb-4">
+                  <CheckCircle size={48} className="text-emerald-600" />
+                </div>
+                <h2 className="text-xl font-bold text-emerald-800 mb-2">Dịch vụ hoàn tất!</h2>
+                <p className="text-emerald-600">Cảm ơn bạn đã sử dụng MotorSafe.</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Job Details */}
           {jobRequestDetails && (
             <div className={`${baseBg} rounded-3xl ${neumorphicShadow} p-3`}>
-              <OrderDetailsCard details={jobRequestDetails} />
+              <OrderDetailsCard details={jobRequestDetails} price={mechanic?.final_price || jobDetails?.finalPrice} />
             </div>
           )}
 
-          {/* Simulator Buttons */}
-          <div className={`${baseBg} rounded-3xl ${neumorphicShadow} p-5 flex justify-center gap-3`}>
-            <button
-              onClick={() => handleSimulateStatus('Arrived')}
-              className={`flex-1 ${baseBg} py-3 rounded-xl font-semibold text-blue-600 transition-all duration-200 ${neumorphicInsetShadow} ${buttonActiveShadow} flex items-center justify-center gap-2`}
-            >
-              <PlayCircle size={20} />
-              Mô phỏng Đã đến
-            </button>
-            <button
-              onClick={() => handleSimulateStatus('Completed')}
-              className={`flex-1 border-2 border-green-500 py-3 rounded-xl font-semibold text-green-600 transition-all duration-200 bg-green-50 flex items-center justify-center gap-2`}
-            >
-              <PlayCircle size={20} />
-              Mô phỏng Hoàn tất
-            </button>
-          </div>
 
-          {/* Ads */}
-          <div className={`${baseBg} rounded-3xl ${neumorphicShadow} p-5 flex flex-col gap-3`}>
-            <AdBanner />
-          </div>
 
           {/* Cancel */}
-          <div className="flex flex-col mb-32 gap-4 mt-2">
-            <button
-              onClick={() => setCancelModalOpen(true)}
-              className={`${baseBg} w-full py-4 rounded-xl font-semibold text-red-600 transition-all duration-200 ${neumorphicShadow} ${buttonActiveShadow} flex items-center justify-center gap-2`}
-            >
-              <X size={20} />
-              Hủy yêu cầu
-            </button>
-          </div>
+          {currentStep < 3 && (
+            <div className="flex flex-col mb-32 gap-4 mt-2">
+              <button
+                onClick={() => setCancelModalOpen(true)}
+                className={`${baseBg} w-full py-4 rounded-xl font-semibold text-red-600 transition-all duration-200 ${neumorphicShadow} ${buttonActiveShadow} flex items-center justify-center gap-2`}
+              >
+                <X size={20} />
+                Hủy yêu cầu
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -658,6 +700,16 @@ export default function MechanicFound() {
           </div>
         </div>
       )}
+
+      {/* Chat Box */}
+      <AnimatePresence>
+        <ChatBox
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          mechanicName={`${mechanic.first_name} ${mechanic.last_name}`}
+          currentStep={currentStep}
+        />
+      </AnimatePresence>
     </>
   );
 }
