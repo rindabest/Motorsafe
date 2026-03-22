@@ -12,6 +12,7 @@ namespace MotorSafe.Backend.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Mechanic> Mechanics { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +34,22 @@ namespace MotorSafe.Backend.Data
                 .WithMany(m => m.Bookings)
                 .HasForeignKey(b => b.MechanicId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Mechanic)
+                .WithMany()
+                .HasForeignKey(r => r.MechanicId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Booking)
+                .WithMany()
+                .HasForeignKey(r => r.BookingId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Review>()
+                .HasIndex(r => r.BookingId)
+                .IsUnique();
 
             // Seed Mock Mechanics (Around Vietnam / Ho Chi Minh City or random)
             // Or random coordinates near user's expected location.

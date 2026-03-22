@@ -146,6 +146,7 @@ export default function FindingMechanic() {
             const mechanicData = {
               job_id: booking.id,
               mechanic_details: {
+                id: booking.mechanicId,
                 first_name: booking.mechanicName || "Mechanic",
                 last_name: "",
                 phone_number: booking.mechanicPhone || "",
@@ -172,11 +173,13 @@ export default function FindingMechanic() {
           navigate(`/mechanic-found/${request_id}/`, {
             state: {
               mechanic: {
+                id: booking.mechanicId,
                 first_name: booking.mechanicName || "Mechanic",
                 last_name: "",
                 phone_number: booking.mechanicPhone || "",
                 current_latitude: booking.mechanicLat,
-                current_longitude: booking.mechanicLng
+                current_longitude: booking.mechanicLng,
+                final_price: booking.finalPrice
               },
               estimatedTime: null,
               requestId: request_id
@@ -242,11 +245,13 @@ export default function FindingMechanic() {
       navigate(`/mechanic-found/${request_id}/`, {
         state: {
           mechanic: {
+            id: mechanic.id,
             first_name: mechanic.name,
             last_name: '',
             phone_number: mechanic.phone,
             current_latitude: mechanic.locationLat,
-            current_longitude: mechanic.locationLng
+            current_longitude: mechanic.locationLng,
+            final_price: mechanic.estimatedPrice
           },
           estimatedTime: null,
           requestId: request_id

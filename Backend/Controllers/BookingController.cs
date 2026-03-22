@@ -85,13 +85,15 @@ namespace MotorSafe.Backend.Controllers
                 .Select(b => new
                 {
                     b.Id,
+                    b.MechanicId,
                     b.Status,
                     b.IssueType,
                     b.FinalPrice,
-                    MechanicName = b.Mechanic.Name,
-                    MechanicPhone = b.Mechanic.Phone,
+                    MechanicName = b.Mechanic != null ? b.Mechanic.Name : null,
+                    MechanicPhone = b.Mechanic != null ? b.Mechanic.Phone : null,
                     b.LocationLat,
-                    b.LocationLng
+                    b.LocationLng,
+                    IsReviewed = _context.Reviews.Any(r => r.BookingId == b.Id)
                 })
                 .FirstOrDefaultAsync(b => b.Id == id);
 
@@ -113,7 +115,7 @@ namespace MotorSafe.Backend.Controllers
 
             booking.MechanicId = request.MechanicId;
             booking.FinalPrice = request.FinalPrice;
-            booking.Status = "Moving";
+            booking.Status = "Pending";
 
             await _context.SaveChangesAsync();
 

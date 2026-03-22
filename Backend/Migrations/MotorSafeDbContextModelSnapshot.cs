@@ -104,6 +104,10 @@ namespace MotorSafe.Backend.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("double");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ShopName")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -127,6 +131,7 @@ namespace MotorSafe.Backend.Migrations
                             Name = "Nguyen Van A",
                             Phone = "0901234567",
                             Rating = 4.7999999999999998,
+                            Role = "",
                             ShopName = "A Motor Repair",
                             SpecialSkills = "Engine, Tires"
                         },
@@ -140,6 +145,7 @@ namespace MotorSafe.Backend.Migrations
                             Name = "Tran Van B",
                             Phone = "0987654321",
                             Rating = 4.5,
+                            Role = "",
                             ShopName = "B Quick Fix",
                             SpecialSkills = "Battery, Start"
                         },
@@ -153,9 +159,44 @@ namespace MotorSafe.Backend.Migrations
                             Name = "Le Thi C",
                             Phone = "0912223334",
                             Rating = 4.9000000000000004,
+                            Role = "",
                             ShopName = "C Motor Service",
                             SpecialSkills = "All"
                         });
+                });
+
+            modelBuilder.Entity("MotorSafe.Backend.Models.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("MechanicId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId")
+                        .IsUnique();
+
+                    b.HasIndex("MechanicId");
+
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("MotorSafe.Backend.Models.User", b =>
@@ -167,7 +208,7 @@ namespace MotorSafe.Backend.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Cccd")
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
@@ -185,6 +226,9 @@ namespace MotorSafe.Backend.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Cccd")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -204,6 +248,25 @@ namespace MotorSafe.Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Mechanic");
+                });
+
+            modelBuilder.Entity("MotorSafe.Backend.Models.Review", b =>
+                {
+                    b.HasOne("MotorSafe.Backend.Models.Booking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MotorSafe.Backend.Models.Mechanic", "Mechanic")
+                        .WithMany()
+                        .HasForeignKey("MechanicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
 
                     b.Navigation("Mechanic");
                 });
