@@ -521,6 +521,7 @@ export default function MechanicFound() {
 
   // --- Timeline State ---
   const [currentStep, setCurrentStep] = useState(0);
+  const shownToastsRef = useRef(new Set());
 
   // --- Helpers ---
   const clearActiveJobData = () => {
@@ -574,29 +575,27 @@ export default function MechanicFound() {
 
   // --- Handle step transitions ---
   useEffect(() => {
+    if (shownToastsRef.current.has(currentStep)) return;
+    shownToastsRef.current.add(currentStep);
+
     if (currentStep === 1) {
-      // Đang di chuyển
       toast.success("Thợ đang trên đường đến!", { icon: '🚗' });
     }
 
     if (currentStep === 2) {
-      // Đã đến nơi
-      if (!mechanicArrived) {
-        toast.success("Thợ đã đến!", { icon: '📍' });
-        setMechanicArrived(true);
-      }
+      toast.success("Thợ đã đến!", { icon: '📍' });
+      setMechanicArrived(true);
     }
 
     if (currentStep === 3) {
       toast.success("Yêu cầu đã được hoàn tất.", { icon: '✅' });
-      // Only show modal if NOT reviewed yet
       if (!isReviewed) {
         setTimeout(() => {
           setIsReviewModalOpen(true);
         }, 1500);
       }
     }
-  }, [currentStep, mechanicArrived, isReviewed]);
+  }, [currentStep, isReviewed]);
 
   // HTTP Polling (keep for real-time backend sync)
   useEffect(() => {
