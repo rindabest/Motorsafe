@@ -33,6 +33,7 @@ namespace MotorSafe.Backend.Data
                 .HasOne(b => b.Mechanic)
                 .WithMany(m => m.Bookings)
                 .HasForeignKey(b => b.MechanicId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Review>()

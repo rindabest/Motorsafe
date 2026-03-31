@@ -259,7 +259,24 @@ export default function FindingMechanic() {
       });
     } catch (error) {
       console.error('Failed to assign mechanic:', error);
-      toast.error(error?.response?.data?.message || 'Có lỗi khi chọn thợ.');
+      const msg = error?.response?.data?.message || 'Có lỗi khi chọn thợ.';
+      toast.error(msg);
+
+      // Thợ đã bị chọn bởi người khác → refresh danh sách
+      if (error?.response?.status === 400 || error?.response?.status === 409) {
+        toast('Đang cập nhật danh sách thợ...', { icon: '🔄' });
+        try {
+          const savedForm = localStorage.getItem('punctureRequestFormData');
+          const issueType = savedForm ? JSON.parse(savedForm)?.problem || '' : '';
+          const { data } = await api.get('/bookings/nearest', {
+            params: { lat: userLocation.lat, lng: userLocation.lng, issueType }
+          });
+          setFoundMechanics(data?.mechanics || []);
+          setSelectedMechanic(null);
+        } catch (refreshError) {
+          console.error('Failed to refresh mechanics:', refreshError);
+        }
+      }
     }
   };
 

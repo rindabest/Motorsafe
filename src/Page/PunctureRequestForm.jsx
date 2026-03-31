@@ -247,12 +247,10 @@ export default function PunctureRequestFormRedesigned() {
             const finalPrice = fixedPartPrice + travelFee + laborCost;
 
             const payload = {
-                mechanicId: 1, // Temporary mechanic, will be reassigned on FindingMechanic page
                 issueType: formData.problem,
                 locationLat: formData.latitude,
                 locationLng: formData.longitude,
                 locationAddress: formData.location,
-                finalPrice: finalPrice
             };
 
             const response = await api.post('/bookings', payload);

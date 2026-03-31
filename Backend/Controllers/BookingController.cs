@@ -26,27 +26,19 @@ namespace MotorSafe.Backend.Controllers
             if (!int.TryParse(customerIdStr, out int customerId))
                 return Unauthorized();
 
-            var mechanic = await _context.Mechanics.FindAsync(request.MechanicId);
-            if (mechanic == null || !mechanic.IsAvailable)
-                return BadRequest(new { message = "Mechanic is not available." });
-
             var booking = new Booking
             {
                 CustomerId = customerId,
-                MechanicId = request.MechanicId,
+                MechanicId = null,
                 IssueType = request.IssueType,
                 LocationLat = request.LocationLat,
                 LocationLng = request.LocationLng,
                 LocationAddress = request.LocationAddress,
-                FinalPrice = request.FinalPrice,
+                FinalPrice = 0,
                 Status = "Pending"
             };
 
             _context.Bookings.Add(booking);
-            
-            // To prevent double booking easily for simulation, we could mark mechanic as unavailable
-            // mechanic.IsAvailable = false;
-            
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true, bookingId = booking.Id });
@@ -106,27 +98,46 @@ namespace MotorSafe.Backend.Controllers
         [HttpPut("{id}/assign-mechanic")]
         public async Task<IActionResult> AssignMechanic(int id, [FromBody] AssignMechanicRequest request)
         {
-            var booking = await _context.Bookings.FindAsync(id);
-            if (booking == null) return NotFound();
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var booking = await _context.Bookings.FindAsync(id);
+                if (booking == null) return NotFound();
 
-            var mechanic = await _context.Mechanics.FindAsync(request.MechanicId);
-            if (mechanic == null || !mechanic.IsAvailable)
-                return BadRequest(new { message = "Mechanic is no longer available." });
+                // Row-level lock to prevent race condition (MySQL InnoDB)
+                var mechanic = await _context.Mechanics
+                    .FromSqlRaw("SELECT * FROM Mechanics WHERE Id = {0} FOR UPDATE", request.MechanicId)
+                    .FirstOrDefaultAsync();
 
-            booking.MechanicId = request.MechanicId;
-            booking.FinalPrice = request.FinalPrice;
-            booking.Status = "Pending";
+                if (mechanic == null || !mechanic.IsAvailable)
+                    return BadRequest(new { message = "Thợ này đã được chọn bởi người khác." });
 
-            await _context.SaveChangesAsync();
+                // Mark mechanic as unavailable
+                mechanic.IsAvailable = false;
 
-            return Ok(new { success = true });
+                booking.MechanicId = request.MechanicId;
+                booking.FinalPrice = request.FinalPrice;
+                booking.Status = "Moving";
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return Ok(new { success = true });
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                return Conflict(new { message = "Có lỗi xảy ra, vui lòng thử lại." });
+            }
         }
 
         [HttpPut("{id}/simulate-status")]
         [AllowAnonymous] // Allow frontend to blindly hit this for demo
         public async Task<IActionResult> SimulateStatus(int id, [FromBody] SimulateStatusRequest request)
         {
-            var booking = await _context.Bookings.FindAsync(id);
+            var booking = await _context.Bookings
+                .Include(b => b.Mechanic)
+                .FirstOrDefaultAsync(b => b.Id == id);
             if (booking == null) return NotFound();
 
             booking.Status = request.Status;
@@ -134,6 +145,16 @@ namespace MotorSafe.Backend.Controllers
             if (request.Status == "Completed")
             {
                 booking.CompletedAt = DateTime.Now;
+                // Release mechanic
+                if (booking.Mechanic != null)
+                    booking.Mechanic.IsAvailable = true;
+            }
+
+            if (request.Status == "Cancelled")
+            {
+                // Release mechanic
+                if (booking.Mechanic != null)
+                    booking.Mechanic.IsAvailable = true;
             }
 
             await _context.SaveChangesAsync();
@@ -229,12 +250,10 @@ namespace MotorSafe.Backend.Controllers
 
     public class CreateBookingRequest
     {
-        public int MechanicId { get; set; }
         public string IssueType { get; set; } = string.Empty;
         public double LocationLat { get; set; }
         public double LocationLng { get; set; }
         public string LocationAddress { get; set; } = string.Empty;
-        public decimal FinalPrice { get; set; }
     }
 
     public class SimulateStatusRequest

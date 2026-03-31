@@ -9,8 +9,8 @@ namespace MotorSafe.Backend.Models
         public int CustomerId { get; set; }
         public User Customer { get; set; } = null!;
 
-        public int MechanicId { get; set; }
-        public Mechanic Mechanic { get; set; } = null!;
+        public int? MechanicId { get; set; }
+        public Mechanic? Mechanic { get; set; }
 
         public string IssueType { get; set; } = string.Empty;
         public string Status { get; set; } = "Pending"; // Pending, Moving, Arrived, Completed, Cancelled
