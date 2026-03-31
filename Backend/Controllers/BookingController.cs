@@ -117,7 +117,7 @@ namespace MotorSafe.Backend.Controllers
 
                 booking.MechanicId = request.MechanicId;
                 booking.FinalPrice = request.FinalPrice;
-                booking.Status = "Moving";
+                booking.Status = "Pending";
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
