@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, X, Loader } from 'lucide-react';
+import { Star, Loader } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../utils/api';
 
@@ -91,14 +91,6 @@ const ReviewModal = ({ isOpen, onClose, mechanicId, bookingId, mechanicName, onS
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           className={`relative z-50 ${baseBg} w-full max-w-sm p-8 rounded-[2.5rem] ${neumorphicShadow}`}
         >
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className={`absolute top-6 right-6 p-2 rounded-full ${neumorphicShadow} ${buttonActiveShadow} transition-all`}
-          >
-            <X size={18} className="text-slate-500" />
-          </button>
-
           <InitialAvatar name={mechanicName} />
 
           <h2 className={`text-2xl font-black mb-1 text-center text-slate-800`}>Đánh giá Dịch vụ</h2>
@@ -146,17 +138,27 @@ const ReviewModal = ({ isOpen, onClose, mechanicId, bookingId, mechanicName, onS
             />
           </div>
 
-          <button
-            onClick={handleSubmit}
-            disabled={isSubmitting || rating === 0}
-            className={`w-full py-4 rounded-2xl font-bold flex justify-center items-center gap-2
-              ${isSubmitting || rating === 0 
-                ? 'opacity-50 text-slate-400 cursor-not-allowed shadow-none' 
-                : `${neumorphicShadow} ${buttonActiveShadow} text-blue-600 bg-slate-200 hover:text-blue-700`}
-              transition-all duration-200`}
-          >
-            {isSubmitting ? <Loader className="animate-spin" size={20} /> : 'Gửi Đánh Giá'}
-          </button>
+          <div className="space-y-4">
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting || rating === 0}
+              className={`w-full py-4 rounded-2xl font-bold flex justify-center items-center gap-2
+                ${isSubmitting || rating === 0 
+                  ? 'opacity-50 text-slate-400 cursor-not-allowed shadow-none' 
+                  : `${neumorphicShadow} ${buttonActiveShadow} text-blue-600 bg-slate-200 hover:text-blue-700`}
+                transition-all duration-200`}
+            >
+              {isSubmitting ? <Loader className="animate-spin" size={20} /> : 'Gửi Đánh Giá'}
+            </button>
+
+            <button
+              onClick={onClose}
+              disabled={isSubmitting}
+              className={`w-full py-3 rounded-2xl font-bold text-slate-500 hover:text-slate-700 transition-all duration-200 ${neumorphicShadow} ${buttonActiveShadow}`}
+            >
+              Bỏ qua
+            </button>
+          </div>
         </motion.div>
       </div>
     </AnimatePresence>

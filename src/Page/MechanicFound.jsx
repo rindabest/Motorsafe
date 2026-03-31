@@ -518,6 +518,7 @@ export default function MechanicFound() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [mechanicRating, setMechanicRating] = useState(0);
   const [isReviewed, setIsReviewed] = useState(false);
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
 
   // --- Timeline State ---
   const [currentStep, setCurrentStep] = useState(0);
@@ -658,7 +659,7 @@ export default function MechanicFound() {
   }, [mechanic, navigate]);
 
   const handleCallMechanic = () => {
-    if (mechanic?.phone_number) window.open(`tel:${mechanic.phone_number}`);
+    setIsPhoneModalOpen(true);
   };
 
   const handleCancelConfirm = async () => {
@@ -879,6 +880,48 @@ export default function MechanicFound() {
           setIsReviewed(true);
         }}
       />
+
+      {/* Phone Number Modal */}
+      <AnimatePresence>
+        {isPhoneModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsPhoneModalOpen(false)}
+              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className={`relative z-50 ${baseBg} w-full max-w-sm p-6 rounded-[2rem] ${neumorphicShadow}`}
+            >
+              <div className="text-center mb-6">
+                <div className={`w-16 h-16 rounded-full ${neumorphicInsetShadow} flex items-center justify-center mx-auto mb-4`}>
+                  <Phone size={28} className="text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800">Số điện thoại của thợ</h3>
+                <p className="text-slate-500 text-sm mt-1">{(mechanic.first_name || mechanic.name || "Thợ")}</p>
+              </div>
+
+              <div className={`py-4 px-6 rounded-2xl ${neumorphicInsetShadow} mb-2 text-center`}>
+                <span className="text-2xl font-black tracking-wider text-slate-800">
+                  {mechanic.phone_number || mechanic.Phone || "Không có số"}
+                </span>
+              </div>
+              
+              <button
+                onClick={() => setIsPhoneModalOpen(false)}
+                className="w-full mt-6 py-2 text-slate-400 font-medium hover:text-slate-600 transition-colors"
+              >
+                Đóng
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
