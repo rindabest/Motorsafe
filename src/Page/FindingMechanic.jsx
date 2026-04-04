@@ -329,7 +329,7 @@ export default function FindingMechanic() {
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-700 flex flex-col items-center justify-center p-4 font-sans">
-      <ConnectionStatus />
+      {/* <ConnectionStatus /> */}
       <div className="w-full max-w-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -515,16 +515,16 @@ export default function FindingMechanic() {
                   className={`bg-gray-100 rounded-2xl p-4 cursor-pointer group transition-all duration-200 ${buttonShadow} hover:${neumorphicInsetShadow}`}
                   onClick={() => setSelectedMechanic(mechanic)}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                        <span className="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">
                           {index + 1}
                         </span>
-                        <h3 className="font-bold text-gray-800">{mechanic.name}</h3>
+                        <h3 className="font-bold text-gray-800 truncate">{mechanic.name}</h3>
                       </div>
-                      <p className="text-sm text-gray-500 ml-8">{mechanic.shopName}</p>
-                      <div className="flex items-center gap-3 mt-2 ml-8 text-sm text-gray-600">
+                      <p className="text-sm text-gray-500 ml-8 truncate">{mechanic.shopName}</p>
+                      <div className="flex items-center gap-3 mt-2 ml-8 text-sm text-gray-600 flex-wrap">
                         <span className="flex items-center gap-1">
                           <Star size={14} className="text-yellow-500 fill-yellow-500" />
                           {mechanic.rating}
@@ -534,16 +534,16 @@ export default function FindingMechanic() {
                           {mechanic.distanceKm} km
                         </span>
                         <span className="flex items-center gap-1">
-                          <Phone size={14} className="text-green-500" />
+                          <Phone size={14} className="text-green-500 shrink-0" />
                           {mechanic.phone}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-400 ml-8 mt-1">
-                        <MapPin size={12} className="inline mr-1" />{mechanic.address}
+                      <p className="text-xs text-gray-400 ml-8 mt-1 line-clamp-2">
+                        <MapPin size={12} className="inline mr-1 shrink-0" />{mechanic.address}
                       </p>
 
                     </div>
-                    <div className="text-right min-w-[90px]">
+                    <div className="text-right shrink-0 whitespace-nowrap">
                       <p className="text-lg font-bold text-green-600">
                         {mechanic.estimatedPrice?.toLocaleString()}đ
                       </p>

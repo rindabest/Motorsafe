@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5275/api';
+// const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5275/api'; // Bản gốc
+const API_URL = import.meta.env.VITE_API_URL || '/api'; // Bản test: Dùng relative path để Ngrok tự nối theo domain
 
 const apiAuth = axios.create({
     baseURL: API_URL,

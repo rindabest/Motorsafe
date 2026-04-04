@@ -228,7 +228,7 @@ const ChatBox = ({ isOpen, onClose, mechanicName, currentStep }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex flex-col bg-slate-200"
+      className="fixed inset-0 h-[100dvh] w-full z-[100] flex flex-col bg-slate-200"
     >
       {/* Chat Header */}
       <div className="bg-slate-200 shadow-[0_4px_10px_#b8bec9] px-4 py-3 flex items-center gap-3 z-10">
@@ -320,7 +320,7 @@ const ChatBox = ({ isOpen, onClose, mechanicName, currentStep }) => {
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Nhập tin nhắn..."
-              className="flex-grow bg-white rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 shadow-[inset_4px_4px_8px_#b8bec9,_inset_-4px_-4px_8px_#ffffff] outline-none focus:ring-2 focus:ring-blue-300 transition-all"
+              className="flex-grow bg-white rounded-xl px-4 py-3 text-[16px] md:text-sm text-slate-800 placeholder-slate-400 shadow-[inset_4px_4px_8px_#b8bec9,_inset_-4px_-4px_8px_#ffffff] outline-none focus:ring-2 focus:ring-blue-300 transition-all"
             />
             <button
               onClick={sendMessage}
@@ -687,7 +687,7 @@ export default function MechanicFound() {
 
   return (
     <>
-      <ConnectionStatus />
+      {/* <ConnectionStatus /> */}
       <div className={`min-h-screen ${baseBg} ${primaryTextColor} pt-28 font-sans`}>
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 z-10">

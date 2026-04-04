@@ -1,7 +1,8 @@
 import axios from "axios";
 
 // Provide fallback to localhost:5275 (typical ASP.NET HTTP port without IIS Express)
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5275/api";
+// const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5275/api"; // Bản gốc
+const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";  // Bản test: relative path cho Ngrok
 
 const api = axios.create({
   baseURL: API_BASE_URL,

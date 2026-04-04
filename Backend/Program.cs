@@ -14,7 +14,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
-        corsBuilder => corsBuilder.WithOrigins("http://localhost:5173", "http://localhost:3000")
+        corsBuilder => 
+            // corsBuilder.WithOrigins("http://localhost:5173", "http://localhost:3000") // <-- Bản gốc
+            corsBuilder.SetIsOriginAllowed(origin => true) // <-- Bản test: Cho phép link Ngrok
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());

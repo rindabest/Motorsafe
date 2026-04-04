@@ -19,16 +19,20 @@ export default defineConfig({
     proxy: {
 
       '/api': {
-        target: 'https://mechanic-setu-backend.vercel.app',
+        // target: 'https://mechanic-setu-backend.vercel.app', // <-- Bản gốc (Cloud)
+        target: 'http://localhost:5275', // <-- Bản test Local / Ngrok
         changeOrigin: true,
-        secure: true,
+        // secure: true,
+        secure: false, // Local dùng http không chứng chỉ nên phải disable secure
       },
       
       '/ws': {
-        target: 'wss://mechanic-setu.onrender.com',
+        // target: 'wss://mechanic-setu.onrender.com', // <-- Bản gốc (Cloud)
+        target: 'ws://localhost:5275', // <-- Bản test Local / Ngrok
         ws: true,
         changeOrigin: true,
-        secure: true,
+        // secure: true,
+        secure: false,
       },
     },
   },
