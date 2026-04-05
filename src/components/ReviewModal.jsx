@@ -50,13 +50,21 @@ const ReviewModal = ({ isOpen, onClose, mechanicId, bookingId, mechanicName, onS
       return;
     }
 
+    const trimmedComment = comment.trim();
+    
+    // Nếu người dùng có gõ phím nhưng chỉ toàn khoảng trắng thì báo lỗi
+    if (comment.length > 0 && trimmedComment === "") {
+      toast.error('Vui lòng nhập nhận xét cụ thể hoặc để trống!');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const response = await api.post('/reviews', {
         mechanicId: parseInt(mechanicId),
         bookingId: parseInt(bookingId),
         rating,
-        comment: comment.trim()
+        comment: trimmedComment
       });
 
       if (response.data.success) {

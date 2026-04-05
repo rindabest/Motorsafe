@@ -98,9 +98,7 @@ const KEYWORD_RESPONSES = {
 };
 
 const FALLBACK_RESPONSES = [
-  'Dạ em nhận được tin nhắn rồi ạ, anh/chị chờ em chút nhé!',
-  'Dạ vâng ạ, em sẽ hỗ trợ anh/chị ngay khi tới nơi.',
-  'Dạ em ghi nhận rồi ạ, cảm ơn anh/chị!',
+  'Anh/chị vui lòng mô tả rõ hơn giúp em ạ.',
 ];
 
 // --- Helper: get first character of name ---
