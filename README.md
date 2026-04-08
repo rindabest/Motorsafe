@@ -70,10 +70,6 @@ Backend mặc định sẽ chạy tại: `https://localhost:5001` hoặc `http:/
 
 ---
 
-## 🤝 Contributor
-- Dự án được phát triển bởi **rindabest**.
-
----
 
 ## 📄 Giấy phép
 Dự án này là mã nguồn mở.
