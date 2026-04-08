@@ -18,6 +18,16 @@ namespace MotorSafe.Backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Force all table names to lowercase to fix Windows-to-Linux MySQL case sensitivity issue
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                var currentTableName = entity.GetTableName();
+                if (!string.IsNullOrEmpty(currentTableName))
+                {
+                    entity.SetTableName(currentTableName.ToLower());
+                }
+            }
+
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Cccd)
                 .IsUnique();
