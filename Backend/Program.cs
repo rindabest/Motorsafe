@@ -10,16 +10,28 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+// Read allowed origins from an environment variable for Production
+var frontendUrl = builder.Configuration["FRONTEND_URL"];
+
 // Configure CORS for React frontend
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
-        corsBuilder => 
-            // corsBuilder.WithOrigins("http://localhost:5173", "http://localhost:3000") // <-- Bản gốc
-            corsBuilder.SetIsOriginAllowed(origin => true) // <-- Bản test: Cho phép link Ngrok
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials());
+    options.AddPolicy("AllowReactApp", corsBuilder => 
+    {
+        if (!string.IsNullOrEmpty(frontendUrl))
+        {
+            corsBuilder.WithOrigins(frontendUrl);
+        }
+        else
+        {
+            // Fallback: Cho phép link Ngrok hoặc local test nếu không có FRONTEND_URL
+            corsBuilder.SetIsOriginAllowed(origin => true);
+        }
+        
+        corsBuilder.AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials();
+    });
 });
 
 // Configure Database Connection
