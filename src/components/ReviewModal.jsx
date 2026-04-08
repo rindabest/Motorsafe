@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Loader } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
+
+const ACTIVE_JOB_STORAGE_KEY = 'activeJobData';
+const FORM_STORAGE_KEY = 'punctureRequestFormData';
 
 const getInitial = (name) => {
   if (!name) return '?';
@@ -29,6 +33,12 @@ const InitialAvatar = ({ name, size = 'w-20 h-20 text-3xl' }) => {
 };
 
 const ReviewModal = ({ isOpen, onClose, mechanicId, bookingId, mechanicName, onSubmitSuccess }) => {
+  const navigate = useNavigate();
+
+  const clearActiveJobData = () => {
+    localStorage.removeItem(ACTIVE_JOB_STORAGE_KEY);
+    localStorage.removeItem(FORM_STORAGE_KEY);
+  };
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -67,12 +77,14 @@ const ReviewModal = ({ isOpen, onClose, mechanicId, bookingId, mechanicName, onS
         comment: trimmedComment
       });
 
-      if (response.data.success) {
+        if (response.data.success) {
         toast.success('Cảm ơn bạn đã đánh giá!');
         if (onSubmitSuccess) {
           onSubmitSuccess(response.data.mechanicAverageRating, response.data.totalReviews);
         }
         onClose();
+        clearActiveJobData();
+        navigate('/');
       }
     } catch (error) {
       console.error('Lỗi khi gửi đánh giá:', error);
@@ -160,7 +172,11 @@ const ReviewModal = ({ isOpen, onClose, mechanicId, bookingId, mechanicName, onS
             </button>
 
             <button
-              onClick={onClose}
+              onClick={() => {
+                onClose();
+                clearActiveJobData();
+                navigate('/');
+              }}
               disabled={isSubmitting}
               className={`w-full py-3 rounded-2xl font-bold text-slate-500 hover:text-slate-700 transition-all duration-200 ${neumorphicShadow} ${buttonActiveShadow}`}
             >

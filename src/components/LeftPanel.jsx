@@ -82,7 +82,7 @@ export default function LeftPanel({ activeJob }) {
                     className="w-full bg-blue-500 text-white py-3 rounded-xl shadow-[3px_3px_6px_#BABECC,-3px_-3px_6px_#FFFFFF] font-semibold hover:shadow-[inset_1px_1px_2px_#BABECC,inset_-1px_-1px_2px_#FFFFFF] transition"
                     onClick={() => navigate("/request")}
                 >
-                    Yêu cầu ngay
+                    Tạo yêu cầu cứu hộ
                 </button>
             )}
 

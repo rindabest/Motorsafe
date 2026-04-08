@@ -27,13 +27,13 @@ namespace MotorSafe.Backend.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             if (await _context.Users.AnyAsync(u => u.Phone == request.Phone))
-                return BadRequest(new { message = "Số điện thoại đã được đăng ký." });
+                return BadRequest(new { message = "Số điện thoại đã tồn tại." });
 
             if (!string.IsNullOrEmpty(request.Email) && await _context.Users.AnyAsync(u => u.Email == request.Email))
-                return BadRequest(new { message = "Email đã được đăng ký." });
+                return BadRequest(new { message = "Email đã tồn tại." });
 
             if (!string.IsNullOrEmpty(request.Cccd) && await _context.Users.AnyAsync(u => u.Cccd == request.Cccd))
-                return BadRequest(new { message = "Số CCCD đã được đăng ký." });
+                return BadRequest(new { message = "CCCD đã tồn tại." });
 
             var user = new User
             {
@@ -54,8 +54,15 @@ namespace MotorSafe.Backend.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Phone == request.AccountIdentifier || u.Email == request.AccountIdentifier);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-                return Unauthorized(new { message = "Số điện thoại/email hoặc mật khẩu không chính xác." });
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Số điện thoại/email không chính xác." });
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                return Unauthorized(new { message = "Mật khẩu không chính xác." });
+            }
 
             var token = GenerateJwtToken(user);
 

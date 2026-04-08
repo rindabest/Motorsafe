@@ -199,9 +199,9 @@ export default function FindingMechanic() {
     return () => clearInterval(intervalId);
   }, [navigate, request_id]);
 
-  // Fetch nearest mechanics after 15 seconds
+  // Fetch nearest mechanics after 10 seconds
   useEffect(() => {
-    if (searchTime >= 15 && !hasFetchedMechanics.current && userLocation) {
+    if (searchTime >= 10 && !hasFetchedMechanics.current && userLocation) {
       hasFetchedMechanics.current = true;
       // Stop the search timer
       if (timerRef.current) {
