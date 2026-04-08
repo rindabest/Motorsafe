@@ -144,7 +144,7 @@ namespace MotorSafe.Backend.Controllers
             
             if (request.Status == "Completed")
             {
-                booking.CompletedAt = DateTime.Now;
+                booking.CompletedAt = DateTime.UtcNow.AddHours(7);
                 // Release mechanic
                 if (booking.Mechanic != null)
                     booking.Mechanic.IsAvailable = true;
