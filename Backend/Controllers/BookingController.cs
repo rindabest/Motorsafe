@@ -106,7 +106,7 @@ namespace MotorSafe.Backend.Controllers
 
                 // Row-level lock to prevent race condition (MySQL InnoDB)
                 var mechanic = await _context.Mechanics
-                    .FromSqlRaw("SELECT * FROM Mechanics WHERE Id = {0} FOR UPDATE", request.MechanicId)
+                    .FromSqlRaw("SELECT * FROM mechanics WHERE Id = {0} FOR UPDATE", request.MechanicId)
                     .FirstOrDefaultAsync();
 
                 if (mechanic == null || !mechanic.IsAvailable)
