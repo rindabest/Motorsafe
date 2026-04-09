@@ -85,7 +85,8 @@ export default function PunctureRequestFormRedesigned() {
             scheduledDate: '',
             scheduledTime: '',
             fillMode: 'manual', // 'rc' or 'manual'
-            rcData: null
+            rcData: null,
+            hasDetectedLocation: false,
         };
 
         const savedData = localStorage.getItem(FORM_STORAGE_KEY);
@@ -95,6 +96,7 @@ export default function PunctureRequestFormRedesigned() {
                 return {
                     ...defaultState,
                     ...(parsed && typeof parsed === 'object' ? parsed : {}),
+                    hasDetectedLocation: false, // Force re-detection on fresh load
                 };
             } catch (e) {
                 console.error("Failed to parse saved form data", e);
@@ -201,7 +203,8 @@ export default function PunctureRequestFormRedesigned() {
             ...prev,
             location: address,
             latitude: latitude,
-            longitude: longitude
+            longitude: longitude,
+            hasDetectedLocation: true,
         }));
     };
 
@@ -282,7 +285,7 @@ export default function PunctureRequestFormRedesigned() {
     };
 
     const canProceed = () => {
-        if (step === 1) return formData.location.trim() !== '' && formData.location !== "Fetching address...";
+        if (step === 1) return formData.hasDetectedLocation === true && formData.location.trim() !== '' && formData.location !== "Fetching address...";
         if (step === 2) {
             if (!formData.problem) return false;
             if (isScheduleService) return !!formData.scheduledDate && !!formData.scheduledTime;

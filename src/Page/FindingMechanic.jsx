@@ -87,7 +87,7 @@ export default function FindingMechanic() {
       container: mapContainerRef.current,
       center: [userLocation.lng, userLocation.lat],
       zoom: 14,
-      style: `https://api.maptiler.com/maps/019b64a4-ef96-7e83-9a23-dde0df92b2ba/style.json?key=wf1HtIzvVsvPfvNrhwPz`,
+      style: 'https://api.maptiler.com/maps/streets-v2/style.json?key=UI9Y5o8fbLFKdhZlDGpL',
       attributionControl: false,
     });
     mapInstanceRef.current = map;
