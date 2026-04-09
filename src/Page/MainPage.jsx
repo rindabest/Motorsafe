@@ -154,7 +154,7 @@ const MainPage = () => {
       container: mapContainerRef.current,
       center: [DEFAULT_CENTER.lng, DEFAULT_CENTER.lat],
       zoom: 13,
-      style: `https://api.maptiler.com/maps/streets-v2/style.json?key=wf1HtIzvVsvPfvNrhwPz`,
+      style: `https://api.maptiler.com/maps/streets-v2/style.json?key=UI9Y5o8fbLFKdhZlDGpL`,
       attributionControl: false,
     });
     mapInstanceRef.current = map;
