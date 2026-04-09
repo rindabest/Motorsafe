@@ -133,11 +133,11 @@ export default function Navbar() {
                 Đăng nhập
               </Link>
               <Link
-                to="/ms"
+                to="/register"
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition"
               >
                 <UserPlus size={16} />
-                Trở thành thợ
+                Đăng ký
               </Link>
             </div>
           )}
@@ -181,11 +181,11 @@ export default function Navbar() {
                   Đăng nhập
                 </Link>
                 <Link
-                  to="/mechanic-registration"
+                  to="/register"
                   className="w-full text-center px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
                   onClick={() => setMenuOpen(false)}
                 >
-                  Trở thành thợ
+                  Đăng ký
                 </Link>
               </div>
             )}
