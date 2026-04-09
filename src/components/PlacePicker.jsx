@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import { Loader2, Navigation, Crosshair } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -28,19 +28,8 @@ const createCustomIcon = () => {
   });
 };
 
-const LocationMarker = ({ position, setPosition }) => {
-  const map = useMapEvents({
-    click(e) {
-      const { lat, lng } = e.latlng;
-      setPosition(lat, lng, null); // Pass null for displayName to trigger reverse geocode
-      map.flyTo([lat, lng], map.getZoom());
-    },
-    locationfound(e) {
-      const { lat, lng } = e.latlng;
-      setPosition(lat, lng, null); // Pass null for displayName to trigger reverse geocode
-      map.flyTo([lat, lng], map.getZoom());
-    },
-  });
+const LocationMarker = ({ position }) => {
+  const map = useMap();
 
   useEffect(() => {
     if (position) {
@@ -52,14 +41,7 @@ const LocationMarker = ({ position, setPosition }) => {
     <Marker
       position={position}
       icon={createCustomIcon()}
-      draggable
-      eventHandlers={{
-        dragend: (e) => {
-          const marker = e.target;
-          const { lat, lng } = marker.getLatLng();
-          setPosition(lat, lng, null); // Pass null for displayName to trigger reverse geocode
-        },
-      }}
+      draggable={false}
     />
   ) : null;
 };
@@ -205,9 +187,9 @@ const PlacePicker = ({ value = {}, onChange }) => {
       {/* Map Section */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">Bản đồ tương tác</span>
+          <span className="text-sm font-medium text-gray-700">Bản đồ vị trí</span>
           <span className="text-xs text-gray-500 bg-gray-300 px-2 py-1 rounded">
-            Nhấp vào bản đồ để chọn vị trí
+            Nhấn Vị trí hiện tại để lấy toạ độ
           </span>
         </div>
 
@@ -215,7 +197,12 @@ const PlacePicker = ({ value = {}, onChange }) => {
           <MapContainer
             center={safePosition}
             zoom={12}
-            scrollWheelZoom={true}
+            dragging={false}
+            doubleClickZoom={false}
+            touchZoom={false}
+            scrollWheelZoom={false}
+            zoomControl={false}
+            keyboard={false}
             style={{ height: '100%', width: '100%' }}
             className="rounded-lg"
           >
