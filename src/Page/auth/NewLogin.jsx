@@ -92,12 +92,12 @@ const NewLogin = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="space-y-1.5">
-                            <label className="block text-xs font-medium text-zinc-300 ml-1">Số điện thoại</label>
+                            <label className="block text-xs font-medium text-zinc-300 ml-1">Số điện thoại/Email</label>
                             <div className="relative">
                                 <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-zinc-500" />
                                 <input
                                     type="text"
-                                    placeholder="Nhập số điện thoại của bạn"
+                                    placeholder="Nhập số điện thoại/email của bạn"
                                     value={phone}
                                     onChange={(e) => {
                                         setPhone(e.target.value);
