@@ -77,16 +77,6 @@ export default function NavbarLanding() {
 
 
 
-          {/* Emergency CTA */}
-          <Link
-            to="/puncture-request"
-            className="ml-2 flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition shadow-sm hover:shadow"
-          >
-            <AlertTriangle size={18} />
-            Khẩn cấp
-          </Link>
-
-          <div className="h-6 w-px bg-gray-300 mx-2"></div>
 
           {/* AUTHENTICATED USER */}
           {isAuthenticated ? (
@@ -110,31 +100,6 @@ export default function NavbarLanding() {
                   </div>
 
                   <div className="py-1">
-                    <Link
-                      to="/profile"
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                      onClick={() => setProfileOpen(false)}
-                    >
-                      <User size={16} /> Hồ sơ của tôi
-                    </Link>
-                    <Link
-                      to="/dashboard/vehicles"
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                      onClick={() => setProfileOpen(false)}
-                    >
-                      <Car size={16} /> Xe của tôi
-                    </Link>
-                    {/* Placeholder for history if page doesn't exist yet */}
-                    <Link
-                      to="/dashboard/vehicles"
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                      onClick={() => setProfileOpen(false)}
-                    >
-                      <FileText size={16} /> Lịch sử dịch vụ
-                    </Link>
-                  </div>
-
-                  <div className="border-t border-gray-100 py-1">
                     <button
                       onClick={handleLogout}
                       className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"
@@ -183,24 +148,9 @@ export default function NavbarLanding() {
 
 
 
-            <Link
-              to="/puncture-request"
-              className="flex items-center gap-3 px-4 py-3 bg-red-50 text-red-600 rounded-lg font-medium"
-              onClick={() => setMenuOpen(false)}
-            >
-              <AlertTriangle size={20} /> Yêu cầu khẩn cấp
-            </Link>
-
-            <div className="h-px bg-gray-100 my-2"></div>
 
             {isAuthenticated ? (
               <>
-                <Link to="/profile" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg" onClick={() => setMenuOpen(false)}>
-                  <User size={20} /> Hồ sơ của tôi
-                </Link>
-                <Link to="/dashboard/vehicles" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg" onClick={() => setMenuOpen(false)}>
-                  <Car size={20} /> Xe của tôi
-                </Link>
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg w-full text-left"
