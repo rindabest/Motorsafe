@@ -212,6 +212,8 @@ export default function PunctureRequestFormRedesigned() {
     const handlePrev = () => {
         if (step > 1) {
             setStep(step - 1);
+        } else {
+            navigate('/home');
         }
     };
 
@@ -328,8 +330,7 @@ export default function PunctureRequestFormRedesigned() {
                 <footer className="flex justify-between items-center mt-8">
                     <button
                         onClick={handlePrev}
-                        disabled={step === 1}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-gray-700 bg-gray-300 shadow-[3px_3px_6px_#BABECC,-3px_-3px_6px_#FFFFFF] hover:shadow-[inset_1px_1px_2px_#BABECC,inset_-1px_-1px_2px_#FFFFFF] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-gray-700 bg-gray-300 shadow-[3px_3px_6px_#BABECC,-3px_-3px_6px_#FFFFFF] hover:shadow-[inset_1px_1px_2px_#BABECC,inset_-1px_-1px_2px_#FFFFFF] transition-all"
                     >
                         <ChevronLeft size={18} />
                         Quay lại

@@ -115,7 +115,7 @@ export default function NavbarLanding() {
             <div className="flex items-center gap-2">
               <Link
                 to="/login"
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition"
+                className="px-4 py-2 text-sm font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition"
               >
                 Đăng nhập
               </Link>
@@ -162,7 +162,7 @@ export default function NavbarLanding() {
               <div className="flex flex-col gap-2 mt-2">
                 <Link
                   to="/login"
-                  className="w-full text-center px-4 py-3 border border-gray-200 rounded-lg font-medium hover:bg-gray-50"
+                  className="w-full text-center px-4 py-3 border border-blue-200 rounded-lg font-bold text-blue-600 hover:bg-blue-50"
                   onClick={() => setMenuOpen(false)}
                 >
                   Đăng nhập

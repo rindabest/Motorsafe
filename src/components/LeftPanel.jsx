@@ -61,11 +61,7 @@ export default function LeftPanel({ activeJob }) {
                     <p className="font-bold text-gray-800">{user?.first_name} {user?.last_name}</p>
                     <p className="text-xs text-gray-500">Tài khoản</p>
                 </div>
-                <button
-                    onClick={() => navigate("/profile")}
-                    className="p-2 bg-gray-300 rounded-full shadow-[3px_3px_6px_#BABECC,-3px_-3px_6px_#FFFFFF] hover:shadow-[inset_1px_1px_2px_#BABECC,inset_-1px_-1px_2px_#FFFFFF] transition">
-                    <ArrowRight size={16} className="text-gray-600" />
-                </button>
+
             </div>
 
             {/* Conditional Button: Active Job or Request Now */}

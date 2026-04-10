@@ -711,14 +711,7 @@ export default function MechanicFound() {
                     <Home size={18} />
                     <span>Về trang chủ</span>
                   </button>
-                ) : (
-                  <div className={`p-3 rounded-full ${neumorphicInsetShadow}`}>
-                    {React.createElement(currentStatus.icon, {
-                      size: 24,
-                      className: currentStep === 2 ? 'text-green-500 animate-bounce' : 'text-blue-500'
-                    })}
-                  </div>
-                )}
+                ) : null}
               </div>
             </div>
 
