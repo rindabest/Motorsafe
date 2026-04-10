@@ -740,7 +740,12 @@ export default function MechanicFound() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsChatOpen(true)}
-                className={`${baseBg} p-3 rounded-full transition-all duration-200 ${neumorphicShadow} ${buttonActiveShadow} relative`}
+                disabled={currentStep >= 3}
+                className={`${baseBg} p-3 rounded-full transition-all duration-200 
+                  ${currentStep >= 3 
+                    ? 'opacity-40 cursor-not-allowed shadow-none' 
+                    : `${neumorphicShadow} ${buttonActiveShadow}`} 
+                  relative`}
               >
                 <MessageCircle size={20} className="text-blue-600" />
               </button>
