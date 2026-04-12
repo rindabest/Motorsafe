@@ -84,7 +84,7 @@ const ReviewModal = ({ isOpen, onClose, mechanicId, bookingId, mechanicName, onS
         }
         onClose();
         clearActiveJobData();
-        navigate('/');
+        navigate('/home');
       }
     } catch (error) {
       console.error('Lỗi khi gửi đánh giá:', error);
@@ -174,7 +174,7 @@ const ReviewModal = ({ isOpen, onClose, mechanicId, bookingId, mechanicName, onS
               onClick={() => {
                 onClose();
                 clearActiveJobData();
-                navigate('/');
+                navigate('/home');
               }}
               disabled={isSubmitting}
               className={`w-full py-3 rounded-2xl font-bold text-slate-500 hover:text-slate-700 transition-all duration-200 ${neumorphicShadow} ${buttonActiveShadow}`}

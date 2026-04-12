@@ -19,7 +19,7 @@ import api from "../utils/api";
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
   const [userData, setUserData] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();

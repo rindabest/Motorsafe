@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Car, Bike, Clock, Loader, Phone, Wifi, WifiOff, X, MapPin, Wrench, NotebookPen, Star, Route, ChevronLeft, ShieldCheck } from 'lucide-react';
@@ -131,6 +131,30 @@ export default function FindingMechanic() {
       });
     });
   }, [userLocation]);
+  
+  const fetchMechanics = useCallback(async () => {
+    if (!userLocation) return;
+    try {
+      const savedForm = localStorage.getItem('punctureRequestFormData');
+      const issueType = savedForm ? JSON.parse(savedForm)?.problem || '' : '';
+
+      const { data } = await api.get('/bookings/nearest', {
+        params: { lat: userLocation.lat, lng: userLocation.lng, issueType }
+      });
+      const hour = new Date().getHours();
+      const nightSurcharge = (hour >= 23 || hour < 6) ? 8000 : 0;
+      const mechanicsWithSurcharge = (data?.mechanics || []).map(m => ({
+        ...m,
+        nightSurcharge,
+        estimatedPrice: (m.estimatedPrice || 0) + nightSurcharge
+      }));
+      setFoundMechanics(mechanicsWithSurcharge);
+      hasFetchedMechanics.current = true;
+    } catch (error) {
+      console.error('Failed to fetch nearest mechanics:', error);
+      toast.error('Không thể tìm thợ gần bạn.');
+    }
+  }, [userLocation, request_id]);
 
   // HTTP Polling
   useEffect(() => {
@@ -199,6 +223,10 @@ export default function FindingMechanic() {
             if (!isNaN(diffInSeconds) && diffInSeconds >= 10) {
               console.log("[SmartResume] Booking is older than 10s, skipping radar animation.");
               setSearchTime(10);
+              // [NEW] Instant fetch mechanics if not already fetched
+              if (!hasFetchedMechanics.current) {
+                fetchMechanics();
+              }
             }
           }
         }
@@ -213,47 +241,19 @@ export default function FindingMechanic() {
     intervalId = setInterval(pollBookingStatus, 3000);
 
     return () => clearInterval(intervalId);
-  }, [navigate, request_id]);
+  }, [navigate, request_id, fetchMechanics]);
 
   // Fetch nearest mechanics after 10 seconds
   useEffect(() => {
     if (searchTime >= 10 && !hasFetchedMechanics.current && userLocation) {
-      hasFetchedMechanics.current = true;
       // Stop the search timer
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
-
-      const fetchMechanics = async () => {
-        try {
-          // Get issue type from saved form data
-          const savedForm = localStorage.getItem('punctureRequestFormData');
-          const issueType = savedForm ? JSON.parse(savedForm)?.problem || '' : '';
-
-          const { data } = await api.get('/bookings/nearest', {
-            params: {
-              lat: userLocation.lat,
-              lng: userLocation.lng,
-              issueType: issueType
-            }
-          });
-          const hour = new Date().getHours();
-          const nightSurcharge = (hour >= 23 || hour < 6) ? 8000 : 0;
-          const mechanicsWithSurcharge = (data?.mechanics || []).map(m => ({
-            ...m,
-            nightSurcharge,
-            estimatedPrice: (m.estimatedPrice || 0) + nightSurcharge
-          }));
-          setFoundMechanics(mechanicsWithSurcharge);
-        } catch (error) {
-          console.error('Failed to fetch nearest mechanics:', error);
-          toast.error('Không thể tìm thợ gần bạn.');
-        }
-      };
       fetchMechanics();
     }
-  }, [searchTime, userLocation]);
+  }, [searchTime, userLocation, fetchMechanics]);
 
   const handleSelectMechanic = async (mechanic) => {
     try {

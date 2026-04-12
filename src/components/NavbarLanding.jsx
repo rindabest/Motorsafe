@@ -16,7 +16,7 @@ import {
 export default function NavbarLanding() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
