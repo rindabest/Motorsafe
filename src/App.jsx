@@ -239,7 +239,7 @@ const GlobalSocketHandler = () => {
           if (location.pathname === '/') {
             window.location.reload();
           } else {
-            navigate('/');
+            navigate('/home');
           }
         }, 2000);
         return () => clearTimeout(timerId);

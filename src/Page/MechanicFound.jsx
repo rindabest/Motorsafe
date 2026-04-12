@@ -613,7 +613,7 @@ export default function MechanicFound() {
           if (booking.status === 'Cancelled') {
             toast.success("Yêu cầu đã được hủy.");
             clearActiveJobData();
-            navigate('/');
+            navigate('/home');
             return;
           }
 
@@ -650,7 +650,7 @@ export default function MechanicFound() {
       if (!mechanic) {
         toast.error("Không tìm thấy chi tiết công việc.");
         clearActiveJobData();
-        navigate('/');
+        navigate('/home');
       }
     }, 1000);
     return () => clearTimeout(timer);
@@ -669,7 +669,7 @@ export default function MechanicFound() {
       await api.put(`/bookings/${paramRequestId}/simulate-status`, { status: 'Cancelled' });
       clearActiveJobData();
       toast.success("Yêu cầu sửa chữa đã được hủy.");
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       toast.error(error.response?.data?.message || "Cancellation failed.");
     } finally {

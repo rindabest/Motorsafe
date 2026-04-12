@@ -322,7 +322,7 @@ export default function FindingMechanic() {
       localStorage.removeItem('punctureRequestFormData');
 
       toast.success("Đã hủy yêu cầu sửa chữa.");
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       console.error("Failed to cancel service request:", error);
       const errorMessage = error.response?.data?.message || "Cancellation failed. Please try again.";
