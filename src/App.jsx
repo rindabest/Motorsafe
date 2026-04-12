@@ -312,20 +312,16 @@ function TabBlockedScreen() {
 
 export default function App() {
   // --- Single-Tab Lock ---
-  const [isTabBlocked, setIsTabBlocked] = useState(true); // Block by default, unlock after check
+  const [isTabBlocked, setIsTabBlocked] = useState(false); // Optimistic: allow by default
   const channelRef = useRef(null);
 
   useEffect(() => {
-    let timeout;
     try {
       const channel = new BroadcastChannel('motorsafe_tab_lock');
       channelRef.current = channel;
 
       // Announce: "I just opened"
       channel.postMessage({ type: 'NEW_TAB_PING' });
-
-      // If no reply within 500ms → we're the only tab → unlock
-      timeout = setTimeout(() => setIsTabBlocked(false), 500);
 
       channel.onmessage = (e) => {
         if (e.data.type === 'NEW_TAB_PING') {
@@ -334,17 +330,14 @@ export default function App() {
         }
         if (e.data.type === 'TAB_ALREADY_ACTIVE') {
           // Got reply → another tab exists → block this tab
-          clearTimeout(timeout);
           setIsTabBlocked(true);
         }
       };
     } catch {
-      // BroadcastChannel not supported → just unlock
-      setIsTabBlocked(false);
+      // BroadcastChannel not supported → just allow
     }
 
     return () => {
-      clearTimeout(timeout);
       channelRef.current?.close();
     };
   }, []);
