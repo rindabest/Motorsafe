@@ -20,6 +20,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userData, setUserData] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -29,10 +30,16 @@ export default function Navbar() {
 
     const checkAuthStatus = async () => {
       try {
-        await api.get("core/me/", { skipAuthRedirect: true });
-        if (!cancelled) setIsAuthenticated(true);
+        const response = await api.get("core/me/", { skipAuthRedirect: true });
+        if (!cancelled) {
+          setIsAuthenticated(true);
+          setUserData(response.data); // Store user info
+        }
       } catch {
-        if (!cancelled) setIsAuthenticated(false);
+        if (!cancelled) {
+          setIsAuthenticated(false);
+          setUserData(null);
+        }
       }
     };
 
@@ -64,6 +71,7 @@ export default function Navbar() {
     document.cookie = "refresh=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     // Dispatch event to update state immediately
     window.dispatchEvent(new Event("authChange"));
+    setUserData(null);
     setProfileOpen(false);
     navigate("/logout");
   };
@@ -101,16 +109,14 @@ export default function Navbar() {
                 <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
                   <User size={18} />
                 </div>
-                <span className="hidden lg:block">Tài khoản</span>
+                <span className="hidden lg:block">{userData?.first_name || 'Tài khoản'}</span>
                 <ChevronDown size={16} className={`transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Dropdown Menu */}
               {profileOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-                  <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
-                    <p className="text-sm font-medium text-gray-900">Tài khoản người dùng</p>
-                  </div>
+                  {/* Header removed as requested */}
 
                   <div className="py-1">
                     <button
