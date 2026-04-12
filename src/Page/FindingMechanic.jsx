@@ -13,7 +13,18 @@ export default function FindingMechanic() {
   const { request_id } = useParams();
   const navigate = useNavigate();
 
-  const [searchTime, setSearchTime] = useState(0);
+  const [searchTime, setSearchTime] = useState(() => {
+    try {
+      // Calculate exact elapsed seconds from creation to resume timer accurately
+      const savedData = JSON.parse(localStorage.getItem("activeJobData") || "{}");
+      const createdAtStr = savedData.created_at || savedData.timestamp;
+      if (createdAtStr) {
+        const diffInSeconds = (new Date() - new Date(createdAtStr)) / 1000;
+        if (!isNaN(diffInSeconds)) return Math.max(0, Math.floor(diffInSeconds));
+      }
+    } catch (e) {}
+    return 0;
+  });
   const [isCancelModalOpen, setCancelModalOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState('');
   const [username, setUsername] = useState('User');
@@ -132,14 +143,15 @@ export default function FindingMechanic() {
     });
   }, [userLocation]);
   
-  const fetchMechanics = useCallback(async () => {
-    if (!userLocation) return;
+  const fetchMechanics = useCallback(async (locationOverride = null) => {
+    const loc = locationOverride || userLocation;
+    if (!loc) return;
     try {
       const savedForm = localStorage.getItem('punctureRequestFormData');
       const issueType = savedForm ? JSON.parse(savedForm)?.problem || '' : '';
 
       const { data } = await api.get('/bookings/nearest', {
-        params: { lat: userLocation.lat, lng: userLocation.lng, issueType }
+        params: { lat: loc.lat, lng: loc.lng, issueType }
       });
       const hour = new Date().getHours();
       const nightSurcharge = (hour >= 23 || hour < 6) ? 8000 : 0;
@@ -223,9 +235,16 @@ export default function FindingMechanic() {
             if (!isNaN(diffInSeconds) && diffInSeconds >= 10) {
               console.log("[SmartResume] Booking is older than 10s, skipping radar animation.");
               setSearchTime(10);
-              // [NEW] Instant fetch mechanics if not already fetched
+              // [NEW] Instant fetch mechanics using local coords if state not ready
               if (!hasFetchedMechanics.current) {
-                fetchMechanics();
+                let currentLoc = userLocation;
+                if (!currentLoc) {
+                  const savedForm = JSON.parse(localStorage.getItem('punctureRequestFormData') || "{}");
+                  if (savedForm.latitude && savedForm.longitude) {
+                    currentLoc = { lat: savedForm.latitude, lng: savedForm.longitude };
+                  }
+                }
+                if (currentLoc) fetchMechanics(currentLoc);
               }
             }
           }
