@@ -68,10 +68,13 @@ const MainPage = () => {
             return;
           }
 
-          if (data.status === 'Pending' && data.id) {
+          const status = (data.status || "").toLowerCase();
+          const hasMechanic = data.mechanicId || data.mechanic_id || data.assigned_mechanic || data.mechanicName;
+
+          if (status === 'pending' && !hasMechanic) {
             console.log("Found: Customer, PENDING job. Showing banner.");
             setActiveJob(data);
-          } else if (data.status === 'Moving' || data.status === 'Arrived') {
+          } else if (status === 'moving' || status === 'arrived' || (status === 'pending' && hasMechanic)) {
             console.log("Found: Customer, ACCEPTED job. Showing banner.");
             setActiveJob(data);
           } else {
@@ -473,7 +476,10 @@ const MainPage = () => {
   const handleGoToActiveJob = () => {
     if (activeJob) {
       const jobId = activeJob.id || activeJob.request_id;
-      if (activeJob.status === 'Pending') {
+      const status = (activeJob.status || "").toLowerCase();
+      const hasMechanic = activeJob.mechanicId || activeJob.mechanic_id || activeJob.assigned_mechanic || activeJob.mechanicName;
+
+      if (status === 'pending' && !hasMechanic) {
         navigate(`/finding/${jobId}`);
       } else {
         navigate(`/mechanic-found/${jobId}`);

@@ -186,15 +186,20 @@ export default function FindingMechanic() {
             },
             replace: true // [FIX] Back button goes to /home
           });
-        } else if (booking && booking.status === 'Pending' && searchTime < 10) {
+        } else if (booking && (booking.status || "").toLowerCase() === "pending" && searchTime < 10) {
           // [SMART RESUME] Check if booking was created > 10s ago
-          const createdAt = new Date(booking.createdAt || booking.created_at);
-          const now = new Date();
-          const diffInSeconds = (now - createdAt) / 1000;
-          
-          if (diffInSeconds >= 10) {
-            console.log("[SmartResume] Booking is older than 10s, skipping radar animation.");
-            setSearchTime(10);
+          const savedData = JSON.parse(localStorage.getItem("activeJobData") || "{}");
+          const createdAtStr = booking.createdAt || booking.created_at || savedData.created_at || savedData.timestamp;
+
+          if (createdAtStr) {
+            const createdAt = new Date(createdAtStr);
+            const now = new Date();
+            const diffInSeconds = (now - createdAt) / 1000;
+
+            if (!isNaN(diffInSeconds) && diffInSeconds >= 10) {
+              console.log("[SmartResume] Booking is older than 10s, skipping radar animation.");
+              setSearchTime(10);
+            }
           }
         }
       } catch (error) {
