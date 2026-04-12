@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Rocket,
-  Zap
+  Zap,
+  AlertTriangle,
+  Monitor
 } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { Link, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
@@ -268,7 +270,90 @@ function getActiveJob() {
   }
 }
 
+// --- Single-Tab Lock: Chặn mở nhiều tab cùng lúc ---
+function TabBlockedScreen() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
+      <div className="max-w-md w-full text-center">
+        {/* Icon */}
+        <div className="relative mx-auto w-24 h-24 mb-8">
+          <div className="absolute inset-0 bg-amber-500/20 rounded-full animate-ping" />
+          <div className="relative w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <Monitor className="w-10 h-10 text-white" />
+          </div>
+        </div>
+
+        {/* Title */}
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3 tracking-tight">
+          MotorSafe đang hoạt động
+        </h1>
+
+        {/* Description */}
+        <p className="text-slate-400 text-base leading-relaxed mb-8 max-w-sm mx-auto">
+          Ứng dụng đang được sử dụng ở một tab khác. Vui lòng quay lại tab đó để tiếp tục.
+        </p>
+
+        {/* Warning box */}
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex items-start gap-3 text-left mb-8">
+          <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+          <p className="text-sm text-amber-200/80 leading-relaxed">
+            Để đảm bảo an toàn cho đơn hàng của bạn, MotorSafe chỉ cho phép sử dụng trên <strong className="text-amber-300">một tab duy nhất</strong> tại một thời điểm.
+          </p>
+        </div>
+
+        {/* Subtle footer */}
+        <p className="text-xs text-slate-600">
+          Bạn có thể đóng tab này an toàn.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
+  // --- Single-Tab Lock ---
+  const [isTabBlocked, setIsTabBlocked] = useState(true); // Block by default, unlock after check
+  const channelRef = useRef(null);
+
+  useEffect(() => {
+    let timeout;
+    try {
+      const channel = new BroadcastChannel('motorsafe_tab_lock');
+      channelRef.current = channel;
+
+      // Announce: "I just opened"
+      channel.postMessage({ type: 'NEW_TAB_PING' });
+
+      // If no reply within 500ms → we're the only tab → unlock
+      timeout = setTimeout(() => setIsTabBlocked(false), 500);
+
+      channel.onmessage = (e) => {
+        if (e.data.type === 'NEW_TAB_PING') {
+          // Another tab is asking if anyone exists → reply "I'm here"
+          channel.postMessage({ type: 'TAB_ALREADY_ACTIVE' });
+        }
+        if (e.data.type === 'TAB_ALREADY_ACTIVE') {
+          // Got reply → another tab exists → block this tab
+          clearTimeout(timeout);
+          setIsTabBlocked(true);
+        }
+      };
+    } catch {
+      // BroadcastChannel not supported → just unlock
+      setIsTabBlocked(false);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+      channelRef.current?.close();
+    };
+  }, []);
+
+  // Show blocked screen if another tab is active
+  if (isTabBlocked) {
+    return <TabBlockedScreen />;
+  }
+
   const activeJob = getActiveJob();
   const location = useLocation();
 
