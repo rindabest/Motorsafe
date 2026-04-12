@@ -183,8 +183,19 @@ export default function FindingMechanic() {
               },
               estimatedTime: null,
               requestId: request_id
-            }
+            },
+            replace: true // [FIX] Back button goes to /home
           });
+        } else if (booking && booking.status === 'Pending' && searchTime < 10) {
+          // [SMART RESUME] Check if booking was created > 10s ago
+          const createdAt = new Date(booking.createdAt || booking.created_at);
+          const now = new Date();
+          const diffInSeconds = (now - createdAt) / 1000;
+          
+          if (diffInSeconds >= 10) {
+            console.log("[SmartResume] Booking is older than 10s, skipping radar animation.");
+            setSearchTime(10);
+          }
         }
       } catch (error) {
         console.error("Failed to poll booking status", error);
@@ -262,7 +273,8 @@ export default function FindingMechanic() {
           },
           estimatedTime: null,
           requestId: request_id
-        }
+        },
+        replace: true
       });
     } catch (error) {
       console.error('Failed to assign mechanic:', error);

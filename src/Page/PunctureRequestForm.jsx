@@ -275,7 +275,7 @@ export default function PunctureRequestFormRedesigned() {
                         created_at: new Date().toISOString(),
                     }));
                     localStorage.setItem('punctureRequestFormData', JSON.stringify(formData));
-                    navigate(`/finding/${requestId}`);
+                    navigate(`/finding/${requestId}`, { replace: true });
                 } else {
                     toast.error("Request created, but missing request id from server.");
                 }

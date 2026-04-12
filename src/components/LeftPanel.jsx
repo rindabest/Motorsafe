@@ -36,8 +36,13 @@ export default function LeftPanel({ activeJob }) {
     }, [navigate]);
 
     const handleGoToActiveJob = () => {
-        if (activeJob && activeJob.request_id) {
-            navigate(`/mechanic-found/${activeJob.request_id}`);
+        if (activeJob) {
+            const jobId = activeJob.id || activeJob.request_id;
+            if (activeJob.status === 'Pending') {
+                navigate(`/finding/${jobId}`);
+            } else {
+                navigate(`/mechanic-found/${jobId}`);
+            }
         }
     };
 

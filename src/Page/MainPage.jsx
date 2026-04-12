@@ -71,7 +71,7 @@ const MainPage = () => {
           if (data.status === 'Pending' && data.id) {
             console.log("Found: Customer, PENDING job. Showing banner.");
             setActiveJob(data);
-          } else if (data.mechanicName && (data.status === 'Moving' || data.status === 'Arrived')) {
+          } else if (data.status === 'Moving' || data.status === 'Arrived') {
             console.log("Found: Customer, ACCEPTED job. Showing banner.");
             setActiveJob(data);
           } else {
