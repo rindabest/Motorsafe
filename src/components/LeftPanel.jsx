@@ -99,12 +99,6 @@ export default function LeftPanel({ activeJob }) {
                             <div key={order.id} className="p-3 bg-gray-200 rounded-xl shadow-[3px_3px_6px_#BABECC,-3px_-3px_6px_#FFFFFF]">
                                 <div className="flex items-center justify-between">
                                     <p className="font-semibold text-gray-700">{order.problem}</p>
-                                    {order.status === 'Cancelled' && (
-                                        <span className="text-[11px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">Đã hủy</span>
-                                    )}
-                                    {order.status === 'Completed' && (
-                                        <span className="text-[11px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">Hoàn thành</span>
-                                    )}
                                 </div>
                                 <p className="text-xs text-gray-500 mt-1">
                                     {order.created_at ? new Date(order.created_at).toLocaleDateString() : 'N/A'}
