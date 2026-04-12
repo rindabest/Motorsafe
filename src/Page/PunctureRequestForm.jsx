@@ -249,7 +249,9 @@ export default function PunctureRequestFormRedesigned() {
                 ? (Math.floor(Math.random() * 11) + 10) * 1000  // 10k to 20k
                 : (Math.floor(Math.random() * 31) + 20) * 1000; // 20k to 50k
 
-            const finalPrice = fixedPartPrice + travelFee + laborCost;
+            const currentHour = new Date().getHours();
+            const nightSurcharge = (currentHour >= 23 || currentHour < 6) ? 8000 : 0;
+            const finalPrice = fixedPartPrice + travelFee + laborCost + nightSurcharge;
 
             const payload = {
                 issueType: formData.problem,

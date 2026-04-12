@@ -222,7 +222,14 @@ export default function FindingMechanic() {
               issueType: issueType
             }
           });
-          setFoundMechanics(data?.mechanics || []);
+          const hour = new Date().getHours();
+          const nightSurcharge = (hour >= 23 || hour < 6) ? 8000 : 0;
+          const mechanicsWithSurcharge = (data?.mechanics || []).map(m => ({
+            ...m,
+            nightSurcharge,
+            estimatedPrice: (m.estimatedPrice || 0) + nightSurcharge
+          }));
+          setFoundMechanics(mechanicsWithSurcharge);
         } catch (error) {
           console.error('Failed to fetch nearest mechanics:', error);
           toast.error('Không thể tìm thợ gần bạn.');
@@ -452,6 +459,12 @@ export default function FindingMechanic() {
                     <span>Công thợ (tuỳ tình trạng)</span>
                     <span className="font-semibold text-gray-800">{selectedMechanic.laborCost?.toLocaleString()}đ</span>
                   </div>
+                  {selectedMechanic.nightSurcharge > 0 && (
+                    <div className="flex justify-between items-center text-gray-600">
+                      <span>Phụ phí đêm (23h - 6h)</span>
+                      <span className="font-semibold text-gray-800">+{selectedMechanic.nightSurcharge?.toLocaleString()}đ</span>
+                    </div>
+                  )}
                   <div className="h-px bg-gray-200 my-4 shadow-[0_1px_1px_rgba(255,255,255,1)]"></div>
                   <div className="flex justify-between items-center text-lg">
                     <span className="font-black text-gray-800">Tổng cộng</span>
@@ -551,6 +564,9 @@ export default function FindingMechanic() {
                         <p>Dịch vụ: {mechanic.baseServicePrice?.toLocaleString()}đ</p>
                         <p>Di chuyển: {mechanic.travelFee?.toLocaleString()}đ</p>
                         <p>Công thợ: {mechanic.laborCost?.toLocaleString()}đ</p>
+                        {mechanic.nightSurcharge > 0 && (
+                          <p className="text-orange-500 font-bold">Phí đêm: +{mechanic.nightSurcharge?.toLocaleString()}đ</p>
+                        )}
                       </div>
                     </div>
                   </div>
