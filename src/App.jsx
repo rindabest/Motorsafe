@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import {
   Rocket,
   Zap
 } from 'lucide-react';
@@ -269,6 +270,7 @@ function getActiveJob() {
 
 export default function App() {
   const activeJob = getActiveJob();
+  const location = useLocation();
 
   return (
     <div className="App transition-all duration-500 ease-in-out bg-white">
